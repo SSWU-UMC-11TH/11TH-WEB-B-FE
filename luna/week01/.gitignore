@@ -1,0 +1,4 @@
+@"
+node_modules/
+dist/
+"@ | Set-Content .\luna\week01\.gitignore
