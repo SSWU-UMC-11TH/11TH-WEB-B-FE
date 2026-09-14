@@ -18,3 +18,15 @@ const members: StudyMember[] = [
         role: "member",
     },
 ];
+
+function createMemberMessage(memberId: number): string {
+    const member = members.find((member) => member.id === memberId);
+
+    if (!member) {
+        return "회원을 찾지 못했어요.";
+    }
+
+    const githubId = member.githubId ?? "등록되지 않음";
+
+    return `${member.name}님은 ${member.role}입니다. GitHub: ${githubId}`;
+}
