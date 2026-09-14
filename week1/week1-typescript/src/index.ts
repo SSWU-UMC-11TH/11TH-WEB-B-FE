@@ -30,3 +30,12 @@ function createMemberMessage(memberId: number): string {
 
     return `${member.name}님은 ${member.role}입니다. GitHub: ${githubId}`;
 }
+
+console.log("1번 회원");
+console.log(createMemberMessage(1));
+
+console.log("\n2번 회원");
+console.log(createMemberMessage(2));
+
+console.log("\n999번 회원");
+console.log(createMemberMessage(999));
