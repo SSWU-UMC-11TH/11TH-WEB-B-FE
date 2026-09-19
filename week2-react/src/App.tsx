@@ -3,6 +3,7 @@ import Header from "./components/header";
 import MovieGrid from "./components/movie-grid";
 import SearchPage from "./components/search-page";
 import LoginPage from "./components/login-page";
+import SignupPage from "./components/signup-page";
 import Footer from "./components/footer";
 import { initialMovies } from "./data/movies";
 import type { Tab } from "./types/tab";
@@ -39,12 +40,14 @@ export default function App() {
           </>
         ) : currentTab === "search" ? (
           <SearchPage onSearch={handleSearch} />
+        ) : currentTab === "login" ? (
+          <LoginPage onSignUp={() => setCurrentTab("signup")} />
         ) : (
-          <LoginPage onSignUp={() => console.log("회원가입 화면은 아직 시안이 없어요.")} />
+          <SignupPage onLogin={() => setCurrentTab("login")} />
         )}
       </main>
 
-      <Footer />
+      {currentTab === "movies" && <Footer />}
     </div>
   );
 }
