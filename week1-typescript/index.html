@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TypeScript 실행 결과</title>
+    <style>
+      body { max-width: 900px; margin: 60px auto; padding: 0 24px; font-family: system-ui, sans-serif; }
+      pre { padding: 24px; background: #f3f4f6; border-radius: 12px; white-space: pre-wrap; line-height: 1.8; }
+    </style>
+  </head>
+  <body>
+    <h1>TypeScript 실행 결과</h1>
+    <pre id="output" aria-live="polite"></pre>
+    <script type="module">
+      const output = document.querySelector("#output");
+      const originalLog = console.log.bind(console);
+      console.log = (...values) => {
+        originalLog(...values);
+        output.textContent += values.map(value =>
+          typeof value === "object" ? JSON.stringify(value, null, 2) : String(value)
+        ).join(" ") + "\n";
+      };
+      try {
+        await import("./dist/index.js");
+      } catch (error) {
+        output.textContent += "실행 오류: " + error.message;
+        console.error(error);
+      }
+    </script>
+  </body>
+</html>
