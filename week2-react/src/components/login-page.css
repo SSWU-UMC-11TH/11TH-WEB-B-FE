@@ -1,0 +1,120 @@
+/*
+ * Figma form#login-form 실측값 (검증: 41+16+73+16+73+16+48+16+21 = 320 허그 높이와 일치)
+ *  - h1: 너비 채우기 430, 높이 허그 41
+ *  - div.form-group(이메일/비밀번호): 너비 채우기 430, 높이 허그 73, 간격 xs(4px)
+ *    → 라벨 21 + 간격 4 + 인풋 48 = 73
+ *  - button.btn: 너비 채우기 430, 높이 Fixed 48, radius 8, 테두리 1px color/bg/surface,
+ *    패딩 좌우 16, 배경 color/action/primary(#2563EB)
+ *  - div.auth-footer: 너비 채우기 430, 높이 허그 21, 패딩 상단 5, 간격 0
+ * 폼 전체: 흐름 세로, 너비 Fixed 430, 높이 허그 320, 간격 16
+ */
+.login-page {
+  display: flex;
+  justify-content: center;
+  padding: 220px 24px 0;
+}
+
+.login-page__box {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 430px;
+}
+
+.login-page__title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 41px;
+  letter-spacing: -0.02em;
+  color: #17191e;
+}
+
+.login-page__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.login-page__label {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 21px;
+  color: #17191e;
+}
+
+.login-page__input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 48px;
+  padding: 0 16px;
+  border: 1px solid #e3e6eb;
+  border-radius: 10px;
+  background-color: #ffffff;
+}
+
+.login-page__input-icon {
+  flex-shrink: 0;
+  color: #969da8;
+}
+
+.login-page__input {
+  flex: 1;
+  height: 100%;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-family: inherit;
+  color: #17191e;
+  background: transparent;
+}
+
+.login-page__input::placeholder {
+  color: #b0b6bf;
+}
+
+/* 버튼 글자: Pretendard ExtraBold 800 / 14px / 행간 100% / 자간 0 / color/bg/surface(#FFFFFF) */
+.login-page__submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  padding: 0 16px;
+  border: 1px solid #ffffff;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0;
+  color: #ffffff;
+  background-color: #2563eb;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.login-page__submit:hover {
+  background-color: #1d4fd8;
+}
+
+.login-page__signup {
+  margin: 0;
+  padding-top: 5px;
+  text-align: center;
+  font-size: 13px;
+  line-height: 21px;
+  color: #606774;
+}
+
+.login-page__signup-link {
+  border: none;
+  background: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 21px;
+  color: #2563eb;
+  cursor: pointer;
+}

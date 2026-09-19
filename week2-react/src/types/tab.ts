@@ -1,1 +1,1 @@
-export type Tab = "movies" | "search";
+export type Tab = "movies" | "search" | "login";

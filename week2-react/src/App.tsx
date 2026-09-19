@@ -2,6 +2,7 @@ import { useState } from "react";
 import Header from "./components/header";
 import MovieGrid from "./components/movie-grid";
 import SearchPage from "./components/search-page";
+import LoginPage from "./components/login-page";
 import Footer from "./components/footer";
 import { initialMovies } from "./data/movies";
 import type { Tab } from "./types/tab";
@@ -36,8 +37,10 @@ export default function App() {
             <h1 className="app__title">영화 목록</h1>
             <MovieGrid movies={movies} onToggleBookmark={handleToggleBookmark} />
           </>
-        ) : (
+        ) : currentTab === "search" ? (
           <SearchPage onSearch={handleSearch} />
+        ) : (
+          <LoginPage onSignUp={() => console.log("회원가입 화면은 아직 시안이 없어요.")} />
         )}
       </main>
 

@@ -81,7 +81,11 @@ export default function Header({ currentTab, onChangeTab }: HeaderProps) {
             </svg>
           </button>
 
-          <button type="button" className="header__login">
+          <button
+            type="button"
+            className="header__login"
+            onClick={() => onChangeTab("login")}
+          >
             로그인
           </button>
         </div>
