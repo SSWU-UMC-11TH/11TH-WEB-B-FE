@@ -4,11 +4,27 @@ import "./movie-card.css";
 interface MovieCardProps {
   movie: Movie;
   onToggleBookmark: (movieId: number) => void;
+  onSelect: (movieId: number) => void;
 }
 
-export default function MovieCard({ movie, onToggleBookmark }: MovieCardProps) {
+export default function MovieCard({
+  movie,
+  onToggleBookmark,
+  onSelect,
+}: MovieCardProps) {
   return (
-    <article className="movie-card">
+    <article
+      className="movie-card"
+      onClick={() => onSelect(movie.id)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onSelect(movie.id);
+        }
+      }}
+    >
       <div className="movie-card__poster">
         <img
           className="movie-card__image"
@@ -25,7 +41,10 @@ export default function MovieCard({ movie, onToggleBookmark }: MovieCardProps) {
               ? `${movie.title} 북마크 해제`
               : `${movie.title} 북마크 추가`
           }
-          onClick={() => onToggleBookmark(movie.id)}
+          onClick={(event) => {
+            event.stopPropagation();
+            onToggleBookmark(movie.id);
+          }}
         >
           <svg
             className="movie-card__bookmark-icon"

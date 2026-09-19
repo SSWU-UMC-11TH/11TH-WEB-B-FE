@@ -33,18 +33,26 @@ export default function Header({ currentTab, onChangeTab }: HeaderProps) {
 
           <nav>
             <ul className="header__nav-list">
-              {NAV_ITEMS.map((item) => (
-                <li key={item.tab}>
-                  <button
-                    type="button"
-                    className="header__nav-link"
-                    aria-current={currentTab === item.tab ? "page" : undefined}
-                    onClick={() => onChangeTab(item.tab)}
-                  >
-                    {item.label}
-                  </button>
-                </li>
-              ))}
+              {NAV_ITEMS.map((item) => {
+                // 영화 상세 화면(detail)은 "영화" 탭에서 들어간 화면이라 함께 활성으로 봐요.
+                const isActive =
+                  item.tab === "movies"
+                    ? currentTab === "movies" || currentTab === "detail"
+                    : currentTab === item.tab;
+
+                return (
+                  <li key={item.tab}>
+                    <button
+                      type="button"
+                      className="header__nav-link"
+                      aria-current={isActive ? "page" : undefined}
+                      onClick={() => onChangeTab(item.tab)}
+                    >
+                      {item.label}
+                    </button>
+                  </li>
+                );
+              })}
               <li>
                 {/* 내 정보 화면은 아직 시안이 없어 탭만 표시해요. */}
                 <button type="button" className="header__nav-link" disabled>

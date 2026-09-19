@@ -5,9 +5,14 @@ import "./movie-grid.css";
 interface MovieGridProps {
   movies: Movie[];
   onToggleBookmark: (movieId: number) => void;
+  onSelectMovie: (movieId: number) => void;
 }
 
-export default function MovieGrid({ movies, onToggleBookmark }: MovieGridProps) {
+export default function MovieGrid({
+  movies,
+  onToggleBookmark,
+  onSelectMovie,
+}: MovieGridProps) {
   if (movies.length === 0) {
     return <p className="movie-grid__empty">표시할 영화가 없어요.</p>;
   }
@@ -16,7 +21,11 @@ export default function MovieGrid({ movies, onToggleBookmark }: MovieGridProps) 
     <ul className="movie-grid">
       {movies.map((movie) => (
         <li key={movie.id}>
-          <MovieCard movie={movie} onToggleBookmark={onToggleBookmark} />
+          <MovieCard
+            movie={movie}
+            onToggleBookmark={onToggleBookmark}
+            onSelect={onSelectMovie}
+          />
         </li>
       ))}
     </ul>
