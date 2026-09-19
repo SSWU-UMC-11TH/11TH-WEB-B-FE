@@ -1,4 +1,5 @@
 import type { Movie } from "../types/movie";
+import { BookmarkIcon, BookmarkOutlineIcon } from "./icons";
 import "./movie-card.css";
 
 interface MovieCardProps {
@@ -28,7 +29,7 @@ export default function MovieCard({
       <div className="movie-card__poster">
         <img
           className="movie-card__image"
-          src={movie.posterUrl}
+          src={movie.posterPath}
           alt={`${movie.title} 포스터`}
           loading="lazy"
         />
@@ -46,21 +47,11 @@ export default function MovieCard({
             onToggleBookmark(movie.id);
           }}
         >
-          <svg
-            className="movie-card__bookmark-icon"
-            viewBox="0 0 24 24"
-            width="16"
-            height="16"
-            aria-hidden="true"
-          >
-            <path
-              d="M6.5 3.5h11a1 1 0 0 1 1 1v16l-6.5-3.9-6.5 3.9v-16a1 1 0 0 1 1-1Z"
-              fill={movie.isBookmarked ? "currentColor" : "none"}
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinejoin="round"
-            />
-          </svg>
+          {movie.isBookmarked ? (
+            <BookmarkIcon className="movie-card__bookmark-icon" width={16} height={16} />
+          ) : (
+            <BookmarkOutlineIcon className="movie-card__bookmark-icon" width={16} height={16} />
+          )}
         </button>
       </div>
 

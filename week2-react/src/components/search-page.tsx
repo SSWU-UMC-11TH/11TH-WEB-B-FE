@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { spiderManSearchResults } from "../data/search-movies";
 import type { SearchMovie } from "../data/search-movies";
+import { SearchIcon, CloseIcon, ArrowRightIcon } from "./icons";
 import "./search-page.css";
 
 interface SearchPageProps {
@@ -45,29 +46,7 @@ export default function SearchPage({ onSelectMovie }: SearchPageProps) {
         <h1 className="search-page__title">어떤 영화를 찾고 있나요?</h1>
 
         <form className="search-page__form" onSubmit={handleSubmit}>
-          <svg
-            className="search-page__icon"
-            viewBox="0 0 24 24"
-            width="20"
-            height="20"
-            aria-hidden="true"
-          >
-            <circle
-              cx="11"
-              cy="11"
-              r="7"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            />
-            <path
-              d="m16.5 16.5 4.5 4.5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-          </svg>
+          <SearchIcon className="search-page__icon" width={20} height={20} />
 
           <input
             className="search-page__input"
@@ -91,29 +70,7 @@ export default function SearchPage({ onSelectMovie }: SearchPageProps) {
       <h1 className="search-results__title">영화 검색</h1>
 
       <form className="search-results__bar" onSubmit={handleSubmit}>
-        <svg
-          className="search-results__bar-icon"
-          viewBox="0 0 24 24"
-          width="18"
-          height="18"
-          aria-hidden="true"
-        >
-          <circle
-            cx="11"
-            cy="11"
-            r="7"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          />
-          <path
-            d="m16.5 16.5 4.5 4.5"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-        </svg>
+        <SearchIcon className="search-results__bar-icon" width={18} height={18} />
 
         <input
           className="search-results__bar-input"
@@ -130,15 +87,7 @@ export default function SearchPage({ onSelectMovie }: SearchPageProps) {
             aria-label="검색어 지우기"
             onClick={handleClear}
           >
-            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-              <path
-                d="m6 6 12 12M18 6 6 18"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
+            <CloseIcon width={16} height={16} />
           </button>
         )}
 
@@ -182,7 +131,8 @@ export default function SearchPage({ onSelectMovie }: SearchPageProps) {
                   className="search-result-card__link"
                   onClick={() => handleSelect(movie)}
                 >
-                  상세 보기 →
+                  상세 보기
+                  <ArrowRightIcon width={14} height={14} />
                 </button>
               </div>
             </li>

@@ -5,8 +5,9 @@ import MovieDetailPage from "./components/movie-detail-page";
 import SearchPage from "./components/search-page";
 import LoginPage from "./components/login-page";
 import SignupPage from "./components/signup-page";
+import ProfilePage from "./components/profile-page";
 import Footer from "./components/footer";
-import { initialMovies } from "./data/movies";
+import { movies as initialMovies } from "./data/movies";
 import type { Tab } from "./types/tab";
 import "./App.css";
 
@@ -52,6 +53,11 @@ export default function App() {
           <LoginPage onSignUp={() => setCurrentTab("signup")} />
         ) : currentTab === "signup" ? (
           <SignupPage onLogin={() => setCurrentTab("login")} />
+        ) : currentTab === "profile" ? (
+          <ProfilePage
+            bookmarkedMovies={movies.filter((movie) => movie.isBookmarked)}
+            onSelectMovie={handleSelectMovie}
+          />
         ) : selectedMovie ? (
           <MovieDetailPage
             movie={selectedMovie}
@@ -63,9 +69,10 @@ export default function App() {
         )}
       </main>
 
-      {(currentTab === "movies" || currentTab === "detail" || currentTab === "search") && (
-        <Footer />
-      )}
+      {(currentTab === "movies" ||
+        currentTab === "detail" ||
+        currentTab === "search" ||
+        currentTab === "profile") && <Footer />}
     </div>
   );
 }

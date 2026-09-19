@@ -49,6 +49,11 @@
   background-color: #ffffff;
 }
 
+.signup-page__input-icon {
+  flex-shrink: 0;
+  color: #969da8;
+}
+
 .signup-page__input {
   flex: 1;
   height: 100%;

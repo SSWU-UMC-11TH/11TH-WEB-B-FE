@@ -1,4 +1,5 @@
 import type { Tab } from "../types/tab";
+import { SearchIcon } from "./icons";
 import "./header.css";
 
 interface HeaderProps {
@@ -9,6 +10,7 @@ interface HeaderProps {
 const NAV_ITEMS: { label: string; tab: Tab }[] = [
   { label: "영화", tab: "movies" },
   { label: "검색", tab: "search" },
+  { label: "내 정보", tab: "profile" },
 ];
 
 export default function Header({ currentTab, onChangeTab }: HeaderProps) {
@@ -53,12 +55,6 @@ export default function Header({ currentTab, onChangeTab }: HeaderProps) {
                   </li>
                 );
               })}
-              <li>
-                {/* 내 정보 화면은 아직 시안이 없어 탭만 표시해요. */}
-                <button type="button" className="header__nav-link" disabled>
-                  내 정보
-                </button>
-              </li>
             </ul>
           </nav>
         </div>
@@ -70,23 +66,7 @@ export default function Header({ currentTab, onChangeTab }: HeaderProps) {
             aria-label="검색"
             onClick={() => onChangeTab("search")}
           >
-            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-              <circle
-                cx="11"
-                cy="11"
-                r="6.5"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              />
-              <path
-                d="m16 16 4.5 4.5"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
+            <SearchIcon width={18} height={18} />
           </button>
 
           <button

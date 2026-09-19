@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="footer__inner">
         <img
           className="footer__logo"
-          src="/tmdb-logo.png"
+          src="/images/logos/tmdb-logo.svg"
           alt="TMDB"
           width={24}
           height={24}

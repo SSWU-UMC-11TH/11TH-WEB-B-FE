@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { MailIcon, PersonIcon, LockIcon } from "./icons";
 import "./signup-page.css";
 
 interface SignupPageProps {
@@ -37,6 +38,7 @@ export default function SignupPage({ onLogin }: SignupPageProps) {
             이메일
           </label>
           <div className="signup-page__input-wrap">
+            <MailIcon className="signup-page__input-icon" width={16} height={16} />
             <input
               id="signup-email"
               className="signup-page__input"
@@ -60,6 +62,7 @@ export default function SignupPage({ onLogin }: SignupPageProps) {
             닉네임
           </label>
           <div className="signup-page__input-wrap">
+            <PersonIcon className="signup-page__input-icon" width={16} height={16} />
             <input
               id="signup-nickname"
               className="signup-page__input"
@@ -83,6 +86,7 @@ export default function SignupPage({ onLogin }: SignupPageProps) {
             비밀번호
           </label>
           <div className="signup-page__input-wrap">
+            <LockIcon className="signup-page__input-icon" width={16} height={16} />
             <input
               id="signup-password"
               className="signup-page__input"
@@ -102,6 +106,7 @@ export default function SignupPage({ onLogin }: SignupPageProps) {
             비밀번호 확인
           </label>
           <div className="signup-page__input-wrap">
+            <LockIcon className="signup-page__input-icon" width={16} height={16} />
             <input
               id="signup-password-confirm"
               className="signup-page__input"

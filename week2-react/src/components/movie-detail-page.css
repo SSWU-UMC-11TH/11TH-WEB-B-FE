@@ -1,8 +1,6 @@
 /*
- * Figma 인스펙터 수치를 아직 받지 못해 제공된 div.detail-stage.png / div.poster.png
- * 스크린샷 기준으로 잡은 값이에요. 정확한 수치를 받으면 이 파일만 다시 맞추면 돼요.
- *
  * 히어로 영역은 .app__main의 좌우 패딩(80px)을 상쇄해 화면 끝까지 꽉 채워요.
+ * 크기는 스크린샷 기준 추정치라, 정확한 인스펙터 값을 받으면 다시 맞추면 돼요.
  */
 .detail-page__hero {
   position: relative;
@@ -13,16 +11,6 @@
   background-size: cover;
   background-position: center;
   overflow: hidden;
-}
-
-.detail-page__hero-fallback {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: blur(2px);
-  transform: scale(1.05);
 }
 
 .detail-page__hero-overlay {
@@ -51,30 +39,6 @@
   font-weight: 600;
   color: #ffffff;
   cursor: pointer;
-}
-
-/*
- * 히어로 이미지 안에 이미 "‹ 영화 목록" 글자가 그려져 있는 경우예요.
- * 같은 자리에 다시 그리면 위치가 어긋나 겹쳐 보이니, 화면에는 아무것도
- * 그리지 않는 투명한 클릭 영역만 남기고 스크린리더용 이름만 유지해요.
- */
-.detail-page__back--hidden {
-  top: 0;
-  left: 0;
-  width: 180px;
-  height: 64px;
-}
-
-.detail-page__title--hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
 }
 
 .detail-page__hero-info {
