@@ -25,7 +25,12 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  border: none;
+  background: none;
+  padding: 0;
   text-decoration: none;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 .header__logo-image {
@@ -50,11 +55,21 @@
 }
 
 .header__nav-link {
+  border: none;
+  background: none;
+  padding: 0;
+  font-family: inherit;
   font-size: 14px;
   font-weight: 700;
   color: #606774;
   text-decoration: none;
+  cursor: pointer;
   transition: color 0.15s ease;
+}
+
+.header__nav-link:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
 }
 
 .header__nav-link[aria-current="page"] {

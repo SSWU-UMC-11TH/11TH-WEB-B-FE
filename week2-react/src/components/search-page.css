@@ -1,0 +1,81 @@
+/*
+ * Figma 인스펙터 수치를 아직 받지 못해 스크린샷 기준으로 잡은 값이에요.
+ * 정확한 수치를 받으면 이 파일만 다시 맞추면 돼요.
+ */
+.search-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 140px 24px 0;
+  text-align: center;
+}
+
+/* Figma: Pretendard Bold 700 / 46px / 행간 52.44px / 자간 -2.3px / color/text/primary */
+.search-page__title {
+  margin: 0 0 36px;
+  font-size: 46px;
+  font-weight: 700;
+  line-height: 52.44px;
+  letter-spacing: -2.3px;
+  color: #17191e;
+}
+
+/*
+ * Figma div.search-box 실측값
+ *  - 흐름 Horizontal, 너비 채우기(790px), 높이 Fixed(74px)
+ *  - radius 12, 테두리 2px color/text/primary(#17191E)
+ *  - 패딩 좌 21 / 우 17, 간격(item spacing) 14
+ *  - 배경 color/bg/surface(#FFFFFF)
+ *  - 바깥쪽 그림자 X0 Y12 blur34 spread0 #111318 8%
+ */
+.search-page__form {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  max-width: 790px;
+  height: 74px;
+  padding: 0 17px 0 21px;
+  border: 2px solid #17191e;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 12px 34px 0 rgba(17, 19, 24, 0.08);
+}
+
+.search-page__icon {
+  flex-shrink: 0;
+  color: #969da8;
+}
+
+.search-page__input {
+  flex: 1;
+  height: 100%;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  font-family: inherit;
+  color: #17191e;
+  background: transparent;
+}
+
+.search-page__input::placeholder {
+  color: #b0b6bf;
+}
+
+.search-page__button {
+  flex-shrink: 0;
+  height: 44px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  background-color: #17191e;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.search-page__button:hover {
+  background-color: #303540;
+}

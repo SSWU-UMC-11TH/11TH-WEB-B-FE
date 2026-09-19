@@ -1,17 +1,26 @@
+import type { Tab } from "../types/tab";
 import "./header.css";
 
-const NAV_ITEMS = [
-  { label: "영화", isActive: true },
-  { label: "검색", isActive: false },
-  { label: "내 정보", isActive: false },
+interface HeaderProps {
+  currentTab: Tab;
+  onChangeTab: (tab: Tab) => void;
+}
+
+const NAV_ITEMS: { label: string; tab: Tab }[] = [
+  { label: "영화", tab: "movies" },
+  { label: "검색", tab: "search" },
 ];
 
-export default function Header() {
+export default function Header({ currentTab, onChangeTab }: HeaderProps) {
   return (
     <header className="header">
       <div className="header__inner">
         <div className="header__left">
-          <a className="header__logo" href="/">
+          <button
+            type="button"
+            className="header__logo"
+            onClick={() => onChangeTab("movies")}
+          >
             <img
               className="header__logo-image"
               src="/logo.png"
@@ -20,27 +29,39 @@ export default function Header() {
               height={32}
             />
             <span className="header__logo-text">UMCine</span>
-          </a>
+          </button>
 
           <nav>
             <ul className="header__nav-list">
               {NAV_ITEMS.map((item) => (
-                <li key={item.label}>
-                  <a
+                <li key={item.tab}>
+                  <button
+                    type="button"
                     className="header__nav-link"
-                    href="/"
-                    aria-current={item.isActive ? "page" : undefined}
+                    aria-current={currentTab === item.tab ? "page" : undefined}
+                    onClick={() => onChangeTab(item.tab)}
                   >
                     {item.label}
-                  </a>
+                  </button>
                 </li>
               ))}
+              <li>
+                {/* 내 정보 화면은 아직 시안이 없어 탭만 표시해요. */}
+                <button type="button" className="header__nav-link" disabled>
+                  내 정보
+                </button>
+              </li>
             </ul>
           </nav>
         </div>
 
         <div className="header__right">
-          <button type="button" className="header__search" aria-label="검색">
+          <button
+            type="button"
+            className="header__search"
+            aria-label="검색"
+            onClick={() => onChangeTab("search")}
+          >
             <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
               <circle
                 cx="11"
