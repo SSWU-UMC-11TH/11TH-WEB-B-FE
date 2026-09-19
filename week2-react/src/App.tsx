@@ -30,11 +30,6 @@ export default function App() {
     setCurrentTab("detail");
   }
 
-  function handleSearch(keyword: string) {
-    // TODO: 검색 결과 화면은 아직 시안이 없어 우선 Console로만 확인해요.
-    console.log("검색어:", keyword);
-  }
-
   const selectedMovie = movies.find((movie) => movie.id === selectedMovieId);
 
   return (
@@ -52,7 +47,7 @@ export default function App() {
             />
           </>
         ) : currentTab === "search" ? (
-          <SearchPage onSearch={handleSearch} />
+          <SearchPage />
         ) : currentTab === "login" ? (
           <LoginPage onSignUp={() => setCurrentTab("signup")} />
         ) : currentTab === "signup" ? (
@@ -68,7 +63,9 @@ export default function App() {
         )}
       </main>
 
-      {(currentTab === "movies" || currentTab === "detail") && <Footer />}
+      {(currentTab === "movies" || currentTab === "detail" || currentTab === "search") && (
+        <Footer />
+      )}
     </div>
   );
 }
