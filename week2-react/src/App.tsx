@@ -6,6 +6,7 @@ import SearchPage from "./components/search-page";
 import LoginPage from "./components/login-page";
 import SignupPage from "./components/signup-page";
 import ProfilePage from "./components/profile-page";
+import ProfileEditPage from "./components/profile-edit-page";
 import Footer from "./components/footer";
 import { movies as initialMovies } from "./data/movies";
 import type { Tab } from "./types/tab";
@@ -57,7 +58,10 @@ export default function App() {
           <ProfilePage
             bookmarkedMovies={movies.filter((movie) => movie.isBookmarked)}
             onSelectMovie={handleSelectMovie}
+            onEditProfile={() => setCurrentTab("profile-edit")}
           />
+        ) : currentTab === "profile-edit" ? (
+          <ProfileEditPage onDone={() => setCurrentTab("profile")} />
         ) : selectedMovie ? (
           <MovieDetailPage
             movie={selectedMovie}

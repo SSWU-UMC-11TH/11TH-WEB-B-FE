@@ -7,6 +7,7 @@ import "./profile-page.css";
 interface ProfilePageProps {
   bookmarkedMovies: Movie[];
   onSelectMovie: (movieId: number) => void;
+  onEditProfile: () => void;
 }
 
 const PAGE_SIZE = 3;
@@ -14,17 +15,13 @@ const PAGE_SIZE = 3;
 export default function ProfilePage({
   bookmarkedMovies,
   onSelectMovie,
+  onEditProfile,
 }: ProfilePageProps) {
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.max(1, Math.ceil(bookmarkedMovies.length / PAGE_SIZE));
   const pageStart = (currentPage - 1) * PAGE_SIZE;
   const visibleMovies = bookmarkedMovies.slice(pageStart, pageStart + PAGE_SIZE);
-
-  function handleEditProfile() {
-    // TODO: 실제 정보 수정 화면 연동은 이후 주차에서 이어가요.
-    console.log("정보 수정 클릭");
-  }
 
   return (
     <section className="profile-page">
@@ -33,7 +30,7 @@ export default function ProfilePage({
         <button
           type="button"
           className="profile-page__edit-button"
-          onClick={handleEditProfile}
+          onClick={onEditProfile}
         >
           정보 수정
         </button>

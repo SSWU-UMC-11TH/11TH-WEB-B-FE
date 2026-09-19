@@ -40,7 +40,9 @@ export default function Header({ currentTab, onChangeTab }: HeaderProps) {
                 const isActive =
                   item.tab === "movies"
                     ? currentTab === "movies" || currentTab === "detail"
-                    : currentTab === item.tab;
+                    : item.tab === "profile"
+                      ? currentTab === "profile" || currentTab === "profile-edit"
+                      : currentTab === item.tab;
 
                 return (
                   <li key={item.tab}>
