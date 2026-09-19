@@ -1,0 +1,30 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f9fa;
+}
+
+.app__main {
+  flex: 1;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 30px 80px 40px;
+}
+
+/* Figma: Pretendard Bold 700 / 38px / 행간 44px / 자간 -1.71px / color/text/primary */
+.app__title {
+  margin: 0 0 28px;
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 44px;
+  letter-spacing: -1.71px;
+  color: #17191e;
+}
+
+@media (max-width: 960px) {
+  .app__main {
+    padding: 24px 24px 40px;
+  }
+}

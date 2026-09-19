@@ -1,0 +1,112 @@
+.header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e3e6eb;
+}
+
+/* Figma header.topbar: 너비 채우기(1440), 높이 허그(91), 패딩 24/80, space-between */
+.header__inner {
+  max-width: 1440px;
+  min-height: 91px;
+  margin: 0 auto;
+  padding: 24px 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.header__left {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.header__logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.header__logo-image {
+  display: block;
+  border-radius: 8px;
+}
+
+.header__logo-text {
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: #000000;
+}
+
+.header__nav-list {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.header__nav-link {
+  font-size: 14px;
+  font-weight: 700;
+  color: #606774;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.header__nav-link[aria-current="page"] {
+  font-size: 14px;
+  font-weight: 700;
+  color: #17191e;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-thickness: 2px;
+}
+
+.header__nav-link:hover {
+  color: #17191e;
+}
+
+.header__right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header__search {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  color: #17191e;
+  background-color: #f1f3f5;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.header__search:hover {
+  background-color: #e7eaee;
+}
+
+.header__login {
+  height: 36px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #2563eb;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.header__login:hover {
+  background-color: #1d4fd8;
+}
