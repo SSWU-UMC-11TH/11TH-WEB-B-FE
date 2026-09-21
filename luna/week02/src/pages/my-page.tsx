@@ -11,7 +11,6 @@ interface Props {
 
 export default function MyPage({ user, movies, onEdit, onSelectMovie }: Props) {
   const bookmarks = movies.filter(m => m.isBookmarked)
-
   return (
     <section className="container my-page">
       <div className="my-header">
@@ -21,11 +20,19 @@ export default function MyPage({ user, movies, onEdit, onSelectMovie }: Props) {
 
       <div className="divider" />
 
-      <div className="profile">
-        <img src="/icons/person.svg" alt="profile" className="profile-icon" />
-        <div>
-          <div className="profile-nick">{user?.nickname ?? '게스트'}</div>
-          <div className="profile-email">{user?.email ?? '-'}</div>
+      <div className="profile-info-grid">
+        <div className="profile">
+          <div className="profile-icon"><img src="/icons/person.svg" alt="profile" /></div>
+        </div>
+
+        <div className="info-block">
+          <span className="label">닉네임</span>
+          <div className="value">{user?.nickname ?? 'gs0428'}</div>
+        </div>
+
+        <div className="info-block">
+          <span className="label">이메일</span>
+          <div className="value">{user?.email ?? 'gwangsoo@cinemalab.kr'}</div>
         </div>
       </div>
 

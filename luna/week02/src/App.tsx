@@ -50,7 +50,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <Header currentPage={page} onNavigate={(p) => goTo(p)} />
+      <Header currentPage={page} onNavigate={(p) => goTo(p)} user={user} />
       <main>
         {page === 'movies' && (
           <MovieListPage

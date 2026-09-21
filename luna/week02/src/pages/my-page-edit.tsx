@@ -12,7 +12,9 @@ export default function MyPageEdit({ user, onSave }: Props) {
     <section className="container my-edit">
       <h2>내 정보 수정</h2>
       <p>닉네임과 프로필 이미지만 변경할 수 있어요.</p>
-
+        <div className="page-header">
+          <button className="primary save-top" onClick={onSave}>변경사항 저장</button>
+        </div>
       <div className="edit-grid">
         <div className="edit-left">
           <div className="profile-choose">

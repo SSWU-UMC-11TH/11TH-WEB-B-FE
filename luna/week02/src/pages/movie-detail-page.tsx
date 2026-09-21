@@ -27,7 +27,7 @@ export default function MovieDetailPage({ movie, onBack, onToggleBookmark }: Pro
         </aside>
 
         <div className="detail-center">
-          <h3>영화 소개</h3>
+          <h2 className="tagline">{movie.tagline}</h2>
           <p className="overview">{movie.overview}</p>
           <button className={`bookmark-btn ${movie.isBookmarked ? 'active' : ''}`} onClick={() => onToggleBookmark(movie.id)}>
             <img src={movie.isBookmarked ? '/icons/bookmark.svg' : '/icons/bookmark-outline.svg'} alt="bookmark" />
@@ -46,7 +46,7 @@ export default function MovieDetailPage({ movie, onBack, onToggleBookmark }: Pro
               ))}
             </div>
             <textarea className="review" placeholder="후기를 남겨보세요" />
-            <button className="primary">평점 저장</button>
+            <button className="black-btn">평점 저장</button>
           </div>
         </aside>
       </div>

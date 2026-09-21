@@ -23,7 +23,7 @@ export default function SignupPage({ onLogin }: Props) {
         <label>
           이메일
           <div className="input-with-btn">
-            <input value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input placeholder="name@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
             <button type="button" className="small">중복 확인</button>
           </div>
         </label>
@@ -31,20 +31,20 @@ export default function SignupPage({ onLogin }: Props) {
         <label>
           닉네임
           <div className="input-with-btn">
-            <input value={nickname} onChange={(e) => setNickname(e.target.value)} />
+            <input placeholder="2~12자" value={nickname} onChange={(e) => setNickname(e.target.value)} />
             <button type="button" className="small">중복 확인</button>
           </div>
         </label>
 
         <label>
           비밀번호
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <input placeholder="8자 이상" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
           <small>영문 대·소문자, 숫자, 특수문자를 모두 포함해 8자 이상 입력해 주세요</small>
         </label>
 
         <label>
           비밀번호 확인
-          <input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} />
+          <input placeholder="다시 입력" type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} />
         </label>
 
         <button className="primary" type="submit">가입하기</button>

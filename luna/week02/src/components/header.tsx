@@ -13,16 +13,17 @@ type Page =
 interface HeaderProps {
     currentPage?: Page
     onNavigate?: (p: Page) => void
+    user?: { email: string; nickname: string } | null
 }
 
-export default function Header({ currentPage = 'movies', onNavigate }: HeaderProps) {
+export default function Header({ currentPage = 'movies', onNavigate, user }: HeaderProps) {
     return (
         <header className="header">
             <div className="header-container">
                 <div className="header-left">
-                    <div className="logo" onClick={() => onNavigate?.('movies')}>
-                        <img src="/icons/movie.svg" alt="movie" />
-                        <span>UMCine</span>
+                    <div className="brand" onClick={() => onNavigate?.('movies')}>
+                        <img src="/icons/span.mark.svg" alt="mark" className="brand-mark" />
+                        <img src="/icons/UMCine.svg" alt="UMCine" className="brand-word" />
                     </div>
 
                     <nav className="main-nav">
@@ -42,7 +43,7 @@ export default function Header({ currentPage = 'movies', onNavigate }: HeaderPro
                     <button className="icon-btn" aria-label="검색" onClick={() => onNavigate?.('search')}>
                         <img src="/icons/search.svg" alt="search" />
                     </button>
-                    <button className="login-btn" onClick={() => onNavigate?.('login')}>로그인</button>
+                    <button className="login-btn" onClick={() => onNavigate?.(user ? 'mypage' : 'login')}>{user ? '마이페이지' : '로그인'}</button>
                 </div>
             </div>
         </header>
