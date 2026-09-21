@@ -21,14 +21,16 @@ const members: Member[] = [
   },
 ];
 
-const findMemberById = (memberId: number) => {
+const findMemberById = (memberId: number): string => {
   const member = members.find((member) => member.id === memberId);
 
   if (!member) {
     return "회원을 찾을 수 없습니다.";
   }
 
-  return `${member.name} / ${member.role} / GitHub: ${member.githubId ?? "등록되지 않음"}`;
+  return `${member.name} / ${member.role} / GitHub: ${
+    member.githubId ?? "등록되지 않음"
+  }`;
 };
 
 console.log(findMemberById(1));
