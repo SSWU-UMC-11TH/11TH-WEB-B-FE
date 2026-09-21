@@ -22,25 +22,22 @@ function findMemberById(memberId: number): StudyMember | undefined {
   return members.find((member) => member.id === memberId);
 }
 
-function describeRole(role: MemberRole) {
+function describeRole(role: MemberRole): string {
   return role === "leader" ? "스터디를 이끌어요" : "스터디에 참여해요";
 }
 
-function createMemberCard(memberId: number) {
+function createMemberCard(memberId: number): string {
   const foundMember = findMemberById(memberId);
 
   // 없는 회원은 여기서 걸러요. 이 아래부터 foundMember는 StudyMember로 좁혀져요
   if (!foundMember) {
-    return memberId + "번 회원을 찾지 못했어요.";
+    return `${memberId}번 회원을 찾지 못했어요.`;
   }
 
   // githubId가 undefined일 때만 기본 문구를 써요
   const githubId = foundMember.githubId ?? "등록되지 않음";
 
-  return (
-    "[" + foundMember.id + "] " + foundMember.name + " 님 — " +
-    describeRole(foundMember.role) + " · GitHub: " + githubId
-  );
+  return `[${foundMember.id}] ${foundMember.name} 님 — ${describeRole(foundMember.role)} · GitHub: ${githubId}`;
 }
 
 console.log(createMemberCard(1));   // 모든 정보가 있는 회원
