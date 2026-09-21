@@ -2,9 +2,13 @@ import type { Movie } from "../types/movie";
 
 interface MovieCardProps {
     movie: Movie;
+    onToggleBookmark: (movieId: number) => void;
 }
 
-export default function MovieCard({ movie }: MovieCardProps) {
+export default function MovieCard({
+    movie,
+    onToggleBookmark,
+}: MovieCardProps) {
     return (
         <article className="movie-card">
             <div className="poster-wrapper">
@@ -14,7 +18,12 @@ export default function MovieCard({ movie }: MovieCardProps) {
                     className="movie-poster"
                 />
 
-                <button type="button" className="bookmark-button">
+                <button
+                    type="button"
+                    className="bookmark-button"
+                    aria-pressed={movie.isBookmarked}
+                    onClick={() => onToggleBookmark(movie.id)}
+                >
                     <img
                         src={
                             movie.isBookmarked
