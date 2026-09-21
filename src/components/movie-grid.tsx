@@ -1,9 +1,16 @@
+import type { Movie } from "../types/movie";
 import MovieCard from "./movie-card";
 
-export default function MovieGrid() {
+interface MovieGridProps {
+    movies: Movie[];
+}
+
+export default function MovieGrid({ movies }: MovieGridProps) {
     return (
-        <section>
-            <MovieCard />
+        <section className="movie-grid">
+            {movies.map((movie) => (
+                <MovieCard key={movie.id} movie={movie} />
+            ))}
         </section>
     );
 }
