@@ -8,14 +8,14 @@ main{flex:1}
 .header{background:#fff;border-bottom:1px solid #e6e9ee}
 .header-container{max-width:1200px;margin:0 auto;padding:20px 24px;display:flex;align-items:center;justify-content:space-between}
 .header-left{display:flex;align-items:center;gap:36px}
-.logo{display:flex;align-items:center;gap:10px;cursor:pointer}
-.logo img{width:28px;height:28px}
-.logo span{font-weight:800;font-size:20px;letter-spacing:0.5px}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.brand-mark{width:44px;height:44px}
+.brand-word{width:100px;height:auto}
 
-.main-nav{display:flex;gap:20px;align-items:center}
-.nav-item{background:transparent;border:0;padding:6px 4px;font-size:15px;color:#6b7280;cursor:pointer}
+.main-nav{display:flex;gap:18px;align-items:center}
+.nav-item{background:transparent;border:0;padding:6px 4px;font-size:14px;color:#6b7280;cursor:pointer}
 .nav-item.active{color:#0f172a;font-weight:700;position:relative}
-.nav-item.active::after{content:'';position:absolute;left:0;right:0;bottom:-12px;height:3px;background:#2563eb;border-radius:2px}
+.nav-item.active::after{content:'';position:absolute;left:0;right:40%;bottom:-8px;height:3px;background:#0f172a;border-radius:2px}
 
 .header-right{display:flex;gap:12px;align-items:center}
 .icon-btn{width:44px;height:44px;border-radius:10px;border:1px solid #e6e9ee;background:#fff;display:flex;align-items:center;justify-content:center}
@@ -23,15 +23,15 @@ main{flex:1}
 .login-btn{background:#2563eb;color:#fff;border:none;padding:8px 18px;border-radius:10px;font-weight:600}
 
 /* Page title */
-.page-title{font-size:28px;font-weight:800;margin:12px 0 20px}
+.page-title{font-size:24px;font-weight:800;margin:12px 0 20px}
 
 /* Movie grid */
 .movie-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:24px;margin:8px 0}
 .movie-card{background:transparent;border-radius:8px;overflow:visible}
 .poster-wrap{position:relative}
-.poster{display:block;width:100%;height:360px;object-fit:cover;border-radius:8px}
-.bookmark-btn{position:absolute;top:12px;right:12px;width:40px;height:40px;border-radius:8px;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;border:none;color:#fff}
-.bookmark-btn img{width:18px;height:18px}
+.poster{display:block;width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:8px}
+.bookmark-btn{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:6px;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;border:none;color:#fff;padding:4px}
+.bookmark-btn img{width:20px;height:20px}
 .bookmark-btn.active{background:#2563eb}
 .movie-info{padding:10px 0}
 .movie-title{font-size:15px;font-weight:700;margin:6px 0 4px;color:#0f172a;cursor:pointer}
@@ -52,14 +52,34 @@ main{flex:1}
 .input-wrap img{width:20px}
 .input-wrap input{border:0;outline:none;font-size:16px;width:100%}
 
+/* Search results toolbar */
+.search-top{display:flex;align-items:flex-start;gap:12px;margin-top:12px}
+.search-toolbar{flex:1}
+.toolbar-input{width:100%;display:flex;align-items:center;gap:12px;border-radius:10px;padding:10px 14px;border:1px solid #e9eef3;height:56px;background:#fff}
+.toolbar-input input{border:0;outline:none;font-size:16px;width:100%}
+.search-black{background:#111;color:#fff;border-radius:8px;padding:10px 14px}
+.clear-btn{width:40px;height:40px;border-radius:8px;border:1px solid #eef2f6;background:#fff;display:flex;align-items:center;justify-content:center}
+.search-meta{color:#6b7280;align-self:center}
+
 .primary{background:#2563eb;color:#fff;border:none;padding:12px 18px;border-radius:10px;font-weight:700}
+
+/* Search page specific: make search input border black and button black */
+.search-box .input-wrap{border:1px solid #111;background:#fff}
+.search-box .primary{background:#111}
 .small{background:#eef2ff;border:1px solid #dbeafe;padding:6px 10px;border-radius:8px}
 .link-btn{background:transparent;border:0;color:#2563eb}
 
 /* Auth forms */
 .auth{display:flex;align-items:center;justify-content:center;padding:40px 20px}
-.auth-form{width:420px;background:#fff;padding:28px;border-radius:12px;border:1px solid #eef2f6}
-.auth-form h2{margin-bottom:14px}
+.auth-form{width:440px;background:transparent;padding:0;border-radius:0;border:0}
+.auth-form h2{margin-bottom:14px;font-size:22px}
+.auth-form input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid #e9eef3;outline:none;background:#fff}
+.auth-form .input-with-btn input{border-radius:10px 0 0 10px;border-right:0}
+.auth-form .input-with-btn{display:flex;gap:8px}
+.auth-form .input-with-btn .small{background:transparent;border:0;color:#2563eb;padding:0 8px;font-weight:600}
+.auth-form label{display:block;margin-bottom:12px;font-weight:600}
+.auth-form small{display:block;color:#6b7280;margin-top:6px;font-size:13px}
+.auth-form .primary{width:100%;height:48px;border-radius:10px}
 .auth-form label{display:block;margin-bottom:12px;font-weight:600}
 .input-icon{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #eef2f6;padding:8px 12px;border-radius:8px}
 .input-icon img{width:18px}
@@ -68,34 +88,65 @@ main{flex:1}
 .input-with-btn input{flex:1}
 .auth-footer{margin-top:12px;font-size:14px}
 
+/* Make auth form inputs and button full width without white card */
+.auth-form label{display:block;margin-bottom:8px}
+.auth-form .input-icon, .auth-form input{width:100%}
+.auth-form .primary{width:100%;display:block;margin-top:12px;padding:12px;border-radius:10px}
+
 /* My page */
 .my-header{display:flex;justify-content:space-between;align-items:center}
 .divider{height:1px;background:#eef0f3;margin:18px 0}
-.profile{display:flex;gap:12px;align-items:center}
-.profile-icon{width:64px;height:64px}
-.favorites{display:flex;gap:12px;margin-top:12px}
+.profile{display:flex;align-items:center;gap:18px}
+.profile-icon{width:72px;height:72px;border-radius:12px;background:#f1f3f5;padding:12px;display:flex;align-items:center;justify-content:center}
+.profile-icon img{width:44px}
+.profile-info-grid{display:grid;grid-template-columns:120px 1fr 1fr;gap:18px;align-items:center}
+.profile-info-grid .info-block .label{display:block;color:#6b7280;font-size:13px}
+.profile-info-grid .info-block .value{font-weight:700;font-size:16px}
+.favorites{display:flex;gap:18px;margin-top:12px}
+
+/* My page edit */
+.my-edit .edit-grid{display:grid;grid-template-columns:280px 1fr;gap:32px;align-items:start}
+.my-edit .profile-choose{width:220px;height:220px;border-radius:50%;background:#f1f3f5;display:flex;align-items:center;justify-content:center;position:relative}
+.my-edit .edit-icon{position:absolute;right:12px;bottom:12px;width:36px;height:36px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid #eef0f3}
+.my-edit label{display:block;margin-bottom:8px;font-weight:600}
+.my-edit .input-with-btn input{padding:12px;border-radius:10px;border:1px solid #e9eef3}
+.my-edit .input-with-btn .small{padding:10px;border-radius:10px}
+.my-edit .warning{background:#fff6f6;border:1px solid #ffcfcf;padding:18px;border-radius:10px;margin-top:18px;display:flex;justify-content:space-between;align-items:center}
+.my-edit .danger{background:#fff;border:1px solid #ff6b6b;color:#b91c1c;padding:8px 12px;border-radius:8px}
+.my-edit .actions{margin-top:18px}
+
+/* My edit header save button */
+.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.save-top{background:#111;color:#fff;padding:8px 14px;border-radius:8px;border:0;font-weight:700}
 
 /* Detail */
 .movie-detail .backdrop{position:relative}
 .backdrop-img{width:100%;height:340px;object-fit:cover;filter:saturate(0.95)}
 .back-link{position:absolute;left:20px;top:20px;background:rgba(255,255,255,0.9);border:0;padding:8px 12px;border-radius:8px}
-.backdrop-meta{position:absolute;left:20px;bottom:20px;color:#fff}
-.detail-title{font-size:28px;margin:0}
-.detail-body{display:flex;gap:24px;padding:28px 0}
-.detail-poster{width:240px;border-radius:8px}
-.detail-center{flex:1}
-.detail-right{width:260px}
-.bookmark-btn{display:inline-flex;gap:8px;align-items:center;padding:10px 12px}
-.star-btn{background:transparent;border:0;padding:6px}
-.star-btn img{width:22px}
-.star-btn.active img{filter:brightness(1)}
-.review{width:100%;height:120px;margin-top:10px;padding:8px;border-radius:8px;border:1px solid #eef2f6}
+.backdrop-meta{position:absolute;left:40px;bottom:40px;color:#fff;max-width:60%}
+.detail-title{font-size:36px;margin:0;font-weight:800;line-height:1}
+.detail-sub{margin-top:8px;opacity:0.9}
+.detail-body{display:flex;gap:32px;padding:32px 0;align-items:flex-start}
+.detail-poster{width:260px;border-radius:8px;flex-shrink:0}
+.detail-center{flex:1;min-width:0}
+.detail-right{width:300px;padding-left:24px;border-left:1px solid #eef0f3}
+.bookmark-btn{display:inline-flex;gap:8px;align-items:center;padding:8px 10px;border-radius:8px}
+.star-btn{background:#fff;border:1px solid #e9eef3;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;padding:6px;margin-right:6px}
+.star-btn img{width:20px;height:20px}
+.star-btn.active{background:#111}
+.star-btn.active img{filter:none}
+.review{width:100%;height:120px;margin-top:10px;padding:12px;border-radius:8px;border:1px solid #eef2f6}
+.black-btn{background:#111;color:#fff;border-radius:8px;padding:10px 12px;border:0;margin-top:12px}
 
 /* Search results */
 .search-results .search-header{display:flex;justify-content:space-between;align-items:center}
 .results-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:18px}
-.result-item{display:flex;gap:12px;background:#fff;padding:12px;border-radius:10px;border:1px solid #eef2f6;cursor:pointer}
+.result-item{display:flex;gap:12px;background:transparent;padding:12px 0;border-radius:0;border:0;cursor:pointer;align-items:flex-start}
 .result-poster{width:100px;height:140px;object-fit:cover;border-radius:6px}
+.result-item + .result-item{border-top:1px solid #eef2f3;padding-top:18px;margin-top:18px}
+.result-body{flex:1}
+.result-sub{color:#6b7280;font-size:13px;margin-top:6px}
+.result-overview{color:#6b7280;font-size:13px;margin-top:8px}
 .result-title{font-weight:700}
 .result-overview{color:#6b7280;font-size:13px}
 .result-arrow{width:18px;height:18px;margin-left:auto}
