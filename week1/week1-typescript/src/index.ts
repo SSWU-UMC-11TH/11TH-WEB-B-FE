@@ -19,16 +19,24 @@ const members: StudyMember[] = [
     },
 ];
 
-function createMemberMessage(memberId: number): string {
-    const member = members.find((member) => member.id === memberId);
+/**
+ * 회원 ID를 통해 회원을 찾고 회원 정보를 문자열로 반환합니다.
+ *
+ * @param memberId 조회할 회원의 ID
+ * @returns 회원 정보 또는 회원을 찾을 수 없다는 메시지
+ */
 
-    if (!member) {
-        return "회원을 찾지 못했어요.";
+function createMemberMessage(memberId: number): string {
+    const foundMember = members.find(
+        (member) => member.id === memberId
+    );
+
+    if (!foundMember) {
+        return "회원을 찾을 수 없습니다.";
     }
 
-    const githubId = member.githubId ?? "등록되지 않음";
-
-    return `${member.name}님은 ${member.role}입니다. GitHub: ${githubId}`;
+    return `${foundMember.name} / ${foundMember.role} / GitHub: ${foundMember.githubId ?? "등록되지 않음"
+        }`;
 }
 
 console.log("1번 회원");
