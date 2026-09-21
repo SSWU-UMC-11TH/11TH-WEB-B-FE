@@ -1,0 +1,102 @@
+erDiagram
+    REGION ||--o{ MEMBER : has
+    REGION ||--o{ STORE : has
+
+    MEMBER ||--o{ SOCIAL_ACCOUNT : has
+    MEMBER ||--o{ MEMBER_FOOD_CATEGORY : chooses
+    MEMBER ||--o{ MEMBER_MISSION : performs
+
+    FOOD_CATEGORY ||--o{ MEMBER_FOOD_CATEGORY : includes
+    FOOD_CATEGORY ||--o{ STORE : classifies
+
+    STORE ||--o{ MISSION : offers
+
+    MISSION ||--o{ MEMBER_MISSION : assigned_to
+    MEMBER_MISSION ||--o| REVIEW : may_have
+
+    REVIEW ||--o{ REVIEW_IMAGE : contains
+
+    REGION {
+        bigint id PK
+        varchar name
+    }
+
+    MEMBER {
+        bigint id PK
+        bigint region_id FK
+        varchar nickname
+        enum gender
+        date birth_date
+        datetime created_at
+        datetime updated_at
+        datetime deleted_at
+    }
+
+    SOCIAL_ACCOUNT {
+        bigint id PK
+        bigint member_id FK
+        enum provider
+        varchar provider_user_id
+        varchar email
+        datetime created_at
+    }
+
+    FOOD_CATEGORY {
+        bigint id PK
+        varchar name
+    }
+
+    MEMBER_FOOD_CATEGORY {
+        bigint id PK
+        bigint member_id FK
+        bigint food_category_id FK
+    }
+
+    STORE {
+        bigint id PK
+        bigint region_id FK
+        bigint food_category_id FK
+        varchar name
+        varchar address
+        text description
+        datetime created_at
+        datetime updated_at
+        datetime deleted_at
+    }
+
+    MISSION {
+        bigint id PK
+        bigint store_id FK
+        varchar title
+        text description
+        int reward_point
+        datetime expired_at
+        datetime created_at
+        datetime updated_at
+    }
+
+    MEMBER_MISSION {
+        bigint id PK
+        bigint member_id FK
+        bigint mission_id FK
+        enum status
+        datetime started_at
+        datetime completed_at
+    }
+
+    REVIEW {
+        bigint id PK
+        bigint member_mission_id FK
+        tinyint rating
+        text content
+        datetime created_at
+        datetime updated_at
+        datetime deleted_at
+    }
+
+    REVIEW_IMAGE {
+        bigint id PK
+        bigint review_id FK
+        varchar image_url
+        int sort_order
+    }
