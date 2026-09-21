@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./App.css";
 import Header from "./components/header";
 import MovieGrid from "./components/movie-grid";
 import Pagination from "./components/pagination";
@@ -18,10 +19,10 @@ export default function App() {
   }
 
   return (
-    <>
+    <div className="app">
       <Header />
 
-      <main>
+      <main className="main-content">
         <h1>영화 목록</h1>
 
         <MovieGrid
@@ -31,6 +32,13 @@ export default function App() {
 
         <Pagination />
       </main>
-    </>
+
+      <footer className="footer">
+        <img src="/images/logos/tmdb-logo.svg" alt="TMDB" />
+        <span>
+          This product uses the TMDB API but is not endorsed or certified by TMDB.
+        </span>
+      </footer>
+    </div>
   );
 }
