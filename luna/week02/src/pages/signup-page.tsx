@@ -16,7 +16,7 @@ export default function SignupPage({ onLogin }: Props) {
   }
 
   return (
-    <section className="auth container">
+    <section className="auth container signup">
       <form className="auth-form" onSubmit={submit}>
         <h2>회원가입</h2>
 
@@ -39,7 +39,7 @@ export default function SignupPage({ onLogin }: Props) {
         <label>
           비밀번호
           <input placeholder="8자 이상" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-          <small>영문 대·소문자, 숫자, 특수문자를 모두 포함해 8자 이상 입력해 주세요</small>
+          <small className="password-help">영문 대·소문자, 숫자, 특수문자를 모두 포함해 8자 이상 입력해 주세요</small>
         </label>
 
         <label>
