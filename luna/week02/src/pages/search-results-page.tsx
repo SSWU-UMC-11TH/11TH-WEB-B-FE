@@ -22,7 +22,7 @@ export default function SearchResultsPage({ movies, query, onSelectMovie }: Prop
 
       <div className="search-top">
         <div className="search-toolbar">
-          <div className="input-wrap toolbar-input">
+          <div className="toolbar-input input-wrap">
             <img src="/icons/search.svg" alt="search" />
             <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={query || '검색어를 입력하세요'} />
             <button className="icon-btn clear-btn" onClick={() => setQ('')} aria-label="clear">
@@ -31,7 +31,11 @@ export default function SearchResultsPage({ movies, query, onSelectMovie }: Prop
             <button className="primary search-black" onClick={() => { /* explicit search */ }}>다시 검색</button>
           </div>
         </div>
-        <div className="search-meta">'{query}' 검색 결과 · {results.length}편</div>
+
+        <div className="search-summary">
+          <strong>'{query}' 검색 결과</strong>
+          <span>영화 {results.length}편 · 1페이지</span>
+        </div>
       </div>
 
       <div className="results-grid">
@@ -42,8 +46,17 @@ export default function SearchResultsPage({ movies, query, onSelectMovie }: Prop
               <div className="result-title">{r.title}</div>
               <div className="result-sub">{r.originalTitle} · {r.releaseDate}</div>
               <p className="result-overview">{r.overview}</p>
+              <button
+                className="result-detail-link"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onSelectMovie(r.id)
+                }}
+              >
+                상세 보기
+                <img src="/icons/arrow-right.svg" alt="" />
+              </button>
             </div>
-            <img src="/icons/arrow-right.svg" alt="go" className="result-arrow" />
           </div>
         ))}
         {results.length === 0 && <div className="no-movies">검색 결과가 없습니다.</div>}
