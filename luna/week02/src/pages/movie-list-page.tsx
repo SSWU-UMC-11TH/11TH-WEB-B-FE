@@ -13,7 +13,11 @@ export default function MovieListPage({ movies, onToggleBookmark, onSelectMovie 
   return (
     <section className="container">
       <h1 className="page-title">영화 목록</h1>
-      <MovieGrid movies={movies} onToggleBookmark={onToggleBookmark} />
+      <MovieGrid
+        movies={movies}
+        onToggleBookmark={onToggleBookmark}
+        onSelectMovie={onSelectMovie}
+      />
       <Pagination />
     </section>
   )

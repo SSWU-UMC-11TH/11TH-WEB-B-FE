@@ -17,7 +17,17 @@ export default function MovieDetailPage({ movie, onBack, onToggleBookmark }: Pro
         <button className="back-link" onClick={onBack}>&lt; 영화 목록</button>
         <div className="backdrop-meta">
           <h2 className="detail-title">{movie.title}</h2>
-          <div className="detail-sub">{movie.originalTitle} · {movie.releaseDate} · {movie.runtime}</div>
+          <div className="detail-original">
+            {movie.originalTitle}
+          </div>
+
+          <div className="detail-meta">
+            {movie.releaseDate}
+            {'  '}
+            {movie.genres.join(' · ')}
+            {'  '}
+            {movie.runtime}
+          </div>
         </div>
       </div>
 
@@ -29,8 +39,14 @@ export default function MovieDetailPage({ movie, onBack, onToggleBookmark }: Pro
         <div className="detail-center">
           <h2 className="tagline">{movie.tagline}</h2>
           <p className="overview">{movie.overview}</p>
-          <button className={`bookmark-btn ${movie.isBookmarked ? 'active' : ''}`} onClick={() => onToggleBookmark(movie.id)}>
-            <img src={movie.isBookmarked ? '/icons/bookmark.svg' : '/icons/bookmark-outline.svg'} alt="bookmark" />
+          <button
+            className={`detail-bookmark-btn ${movie.isBookmarked ? 'active' : ''}`}
+            onClick={() => onToggleBookmark(movie.id)}
+          >
+            <img
+              src={movie.isBookmarked ? '/icons/bookmark.svg' : '/icons/bookmark-outline.svg'}
+              alt=""
+            />
             즐겨찾기
           </button>
         </div>
@@ -38,14 +54,15 @@ export default function MovieDetailPage({ movie, onBack, onToggleBookmark }: Pro
         <aside className="detail-right">
           <div className="my-rating">
             <div className="my-rating-title">내 평점</div>
+            <div className="rating-note">별점은 필수, 후기는 선택이에요.</div>
             <div className="stars">
-              {[1,2,3,4,5].map((n) => (
-                <button key={n} className={`star-btn ${rating>=n? 'active':''}`} onClick={() => setRating(n)}>
-                  <img src={rating>=n? '/icons/star.svg' : '/icons/star-outline.svg'} alt={`star-${n}`} />
+              {[1, 2, 3, 4, 5].map((n) => (
+                <button key={n} className={`star-btn ${rating >= n ? 'active' : ''}`} onClick={() => setRating(n)}>
+                  <img src={rating >= n ? '/icons/star.svg' : '/icons/star-outline.svg'} alt={`star-${n}`} />
                 </button>
               ))}
             </div>
-            <textarea className="review" placeholder="후기를 남겨보세요" />
+            <textarea className="review" placeholder="영화를 보고 느낀 점을 남겨보세요." />
             <button className="black-btn">평점 저장</button>
           </div>
         </aside>
