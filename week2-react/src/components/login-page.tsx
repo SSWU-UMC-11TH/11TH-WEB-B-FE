@@ -13,7 +13,7 @@ export default function LoginPage({ onSignUp }: LoginPageProps) {
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     // TODO: 실제 로그인 API 연동은 이후 주차에서 이어가요.
-    console.log("로그인 시도:", { email, password });
+    console.log("로그인 시도");
   }
 
   return (

@@ -58,6 +58,13 @@
   background: transparent;
 }
 
+/* 입력칸의 기본 outline은 숨기고, 대신 검색 상자 전체에 포커스 테두리를 그려요. */
+.search-page__form:has(.search-page__input:focus-visible),
+.search-results__bar:has(.search-results__bar-input:focus-visible) {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
 .search-page__input::placeholder {
   color: #b0b6bf;
 }

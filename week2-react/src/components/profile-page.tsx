@@ -1,10 +1,11 @@
 import { useState } from "react";
 import type { Movie } from "../types/movie";
-import { currentUser } from "../data/current-user";
+import type { UserProfile } from "../data/current-user";
 import Pagination from "./pagination";
 import "./profile-page.css";
 
 interface ProfilePageProps {
+  profile: UserProfile;
   bookmarkedMovies: Movie[];
   onSelectMovie: (movieId: number) => void;
   onEditProfile: () => void;
@@ -13,6 +14,7 @@ interface ProfilePageProps {
 const PAGE_SIZE = 3;
 
 export default function ProfilePage({
+  profile,
   bookmarkedMovies,
   onSelectMovie,
   onEditProfile,
@@ -41,7 +43,7 @@ export default function ProfilePage({
         <div className="profile-page__basic-info">
           <img
             className="profile-page__avatar"
-            src="/avatar.png"
+            src={profile.avatarUrl}
             alt=""
             aria-hidden="true"
             width={64}
@@ -50,12 +52,12 @@ export default function ProfilePage({
 
           <div className="profile-page__field">
             <p className="profile-page__field-label">닉네임</p>
-            <p className="profile-page__field-value">{currentUser.nickname}</p>
+            <p className="profile-page__field-value">{profile.nickname}</p>
           </div>
 
           <div className="profile-page__field">
             <p className="profile-page__field-label">이메일</p>
-            <p className="profile-page__field-value">{currentUser.email}</p>
+            <p className="profile-page__field-value">{profile.email}</p>
           </div>
         </div>
       </div>

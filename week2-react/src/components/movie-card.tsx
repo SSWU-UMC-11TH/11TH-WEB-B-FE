@@ -14,18 +14,7 @@ export default function MovieCard({
   onSelect,
 }: MovieCardProps) {
   return (
-    <article
-      className="movie-card"
-      onClick={() => onSelect(movie.id)}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          onSelect(movie.id);
-        }
-      }}
-    >
+    <article className="movie-card">
       <div className="movie-card__poster">
         <img
           className="movie-card__image"
@@ -42,10 +31,7 @@ export default function MovieCard({
               ? `${movie.title} 북마크 해제`
               : `${movie.title} 북마크 추가`
           }
-          onClick={(event) => {
-            event.stopPropagation();
-            onToggleBookmark(movie.id);
-          }}
+          onClick={() => onToggleBookmark(movie.id)}
         >
           {movie.isBookmarked ? (
             <BookmarkIcon className="movie-card__bookmark-icon" width={16} height={16} />
@@ -56,7 +42,16 @@ export default function MovieCard({
       </div>
 
       <div className="movie-card__info">
-        <h3 className="movie-card__title">{movie.title}</h3>
+        <h3 className="movie-card__title">
+          <button
+            type="button"
+            className="movie-card__select"
+            aria-label={`${movie.title} 상세 보기`}
+            onClick={() => onSelect(movie.id)}
+          >
+            {movie.title}
+          </button>
+        </h3>
         <p className="movie-card__release-date">{movie.releaseDate}</p>
       </div>
     </article>

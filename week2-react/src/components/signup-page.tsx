@@ -15,17 +15,17 @@ export default function SignupPage({ onLogin }: SignupPageProps) {
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     // TODO: 실제 회원가입 API 연동은 이후 주차에서 이어가요.
-    console.log("회원가입 시도:", { email, nickname, password, passwordConfirm });
+    console.log("회원가입 시도");
   }
 
   function handleCheckEmail() {
     // TODO: 이메일 중복 확인 API 연동은 이후 주차에서 이어가요.
-    console.log("이메일 중복 확인:", email);
+    console.log("이메일 중복 확인 요청");
   }
 
   function handleCheckNickname() {
     // TODO: 닉네임 중복 확인 API 연동은 이후 주차에서 이어가요.
-    console.log("닉네임 중복 확인:", nickname);
+    console.log("닉네임 중복 확인 요청");
   }
 
   return (
@@ -91,12 +91,14 @@ export default function SignupPage({ onLogin }: SignupPageProps) {
               id="signup-password"
               className="signup-page__input"
               type="password"
+              autoComplete="new-password"
+              aria-describedby="signup-password-helper"
               placeholder="8자 이상"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
             />
           </div>
-          <p className="signup-page__helper">
+          <p id="signup-password-helper" className="signup-page__helper">
             영문 대·소문자, 숫자, 특수문자를 모두 포함해 8자 이상 입력해 주세요
           </p>
         </div>
@@ -111,6 +113,7 @@ export default function SignupPage({ onLogin }: SignupPageProps) {
               id="signup-password-confirm"
               className="signup-page__input"
               type="password"
+              autoComplete="new-password"
               placeholder="다시 입력"
               value={passwordConfirm}
               onChange={(event) => setPasswordConfirm(event.target.value)}

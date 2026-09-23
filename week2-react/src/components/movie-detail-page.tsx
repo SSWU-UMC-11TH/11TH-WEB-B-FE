@@ -26,6 +26,7 @@ export default function MovieDetailPage({
   const [review, setReview] = useState("");
 
   function handleSaveRating() {
+    if (rating === 0) return;
     // TODO: 실제 평점 저장 API 연동은 이후 주차에서 이어가요.
     console.log("평점 저장:", { movieId: movie.id, rating, review });
   }
@@ -132,6 +133,7 @@ export default function MovieDetailPage({
             type="button"
             className="detail-page__save-button"
             onClick={handleSaveRating}
+            disabled={rating === 0}
           >
             평점 저장
           </button>

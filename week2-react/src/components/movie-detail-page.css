@@ -246,8 +246,13 @@
   transition: background-color 0.15s ease;
 }
 
-.detail-page__save-button:hover {
+.detail-page__save-button:hover:not(:disabled) {
   background-color: #303540;
+}
+
+.detail-page__save-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 @media (max-width: 960px) {

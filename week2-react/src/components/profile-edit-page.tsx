@@ -1,32 +1,44 @@
 import { useRef, useState } from "react";
-import { currentUser } from "../data/current-user";
+import type { UserProfile } from "../data/current-user";
 import { EditIcon } from "./icons";
 import "./profile-edit-page.css";
 
+const MAX_AVATAR_BYTES = 5 * 1024 * 1024;
+
 interface ProfileEditPageProps {
-  onDone: () => void;
+  profile: UserProfile;
+  onSave: (changes: Pick<UserProfile, "nickname" | "avatarUrl">) => void;
 }
 
-export default function ProfileEditPage({ onDone }: ProfileEditPageProps) {
-  const [nickname, setNickname] = useState(currentUser.nickname);
-  const [avatarUrl, setAvatarUrl] = useState("/avatar.png");
+export default function ProfileEditPage({ profile, onSave }: ProfileEditPageProps) {
+  const [nickname, setNickname] = useState(profile.nickname);
+  const [avatarUrl, setAvatarUrl] = useState(profile.avatarUrl);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   function handleCheckNickname() {
     // TODO: 닉네임 중복 확인 API 연동은 이후 주차에서 이어가요.
-    console.log("닉네임 중복 확인:", nickname);
+    console.log("닉네임 중복 확인 요청");
   }
 
   function handleChangeAvatar(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
+    // 같은 파일을 다시 골라도 onChange가 실행되도록 선택값을 비워요.
+    event.target.value = "";
     if (!file) return;
+
+    if (file.size > MAX_AVATAR_BYTES) {
+      setAvatarError("5MB 이하의 이미지만 올릴 수 있어요.");
+      return;
+    }
+
+    setAvatarError(null);
     setAvatarUrl(URL.createObjectURL(file));
   }
 
   function handleSave() {
     // TODO: 실제 정보 저장 API 연동은 이후 주차에서 이어가요.
-    console.log("변경사항 저장:", { nickname, avatarUrl });
-    onDone();
+    onSave({ nickname, avatarUrl });
   }
 
   function handleDeleteAccount() {
@@ -84,6 +96,11 @@ export default function ProfileEditPage({ onDone }: ProfileEditPageProps) {
           </div>
           <p className="profile-edit-page__avatar-label">프로필 이미지</p>
           <p className="profile-edit-page__avatar-hint">선택 사항 · 최대 5MB</p>
+          {avatarError && (
+            <p className="profile-edit-page__avatar-error" role="alert">
+              {avatarError}
+            </p>
+          )}
         </div>
 
         <div className="profile-edit-page__fields">
@@ -118,7 +135,7 @@ export default function ProfileEditPage({ onDone }: ProfileEditPageProps) {
                 id="edit-email"
                 className="profile-edit-page__input"
                 type="email"
-                value={currentUser.email}
+                value={profile.email}
                 readOnly
               />
             </div>

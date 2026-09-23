@@ -118,6 +118,12 @@
   color: #969da8;
 }
 
+.profile-edit-page__avatar-error {
+  margin: 0;
+  font-size: 12px;
+  color: #dc2626;
+}
+
 .profile-edit-page__fields {
   flex: 1;
   display: flex;

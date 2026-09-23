@@ -148,6 +148,10 @@
     gap: 20px;
   }
 
+  .profile-page__field + .profile-page__field {
+    margin-left: 0;
+  }
+
   .profile-page__grid {
     grid-template-columns: repeat(2, 1fr);
   }

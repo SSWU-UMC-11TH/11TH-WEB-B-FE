@@ -137,3 +137,63 @@ export const movies: Movie[] = [
     isBookmarked: false,
   },
 ];
+
+// 영화 목록에는 나오지 않고 검색 결과의 상세 화면에서만 쓰는 영화예요.
+export const detailOnlyMovies: Movie[] = [
+  {
+    id: 11,
+    title: "스파이더맨",
+    originalTitle: "Spider-Man",
+    releaseDate: "2002.05.03",
+    posterPath: "/posters/search/spider-man.png",
+    backdropPath: "/posters/search/spider-man.png",
+    genres: ["액션", "모험", "SF"],
+    runtime: "2시간 1분",
+    tagline: "큰 힘에는 큰 책임이 따른다",
+    overview:
+      "방사능 거미에 물려 특별한 능력을 얻은 피터 파커는 벤 아저씨의 죽음을 계기로 그 힘을 악과 맞서는 데 쓰기로 해요.",
+    isBookmarked: false,
+  },
+  {
+    id: 12,
+    title: "스파이더맨: 홈커밍",
+    originalTitle: "Spider-Man: Homecoming",
+    releaseDate: "2017.07.05",
+    posterPath: "/posters/search/spider-man-homecoming.png",
+    backdropPath: "/posters/search/spider-man-homecoming.png",
+    genres: ["액션", "모험", "SF"],
+    runtime: "2시간 13분",
+    tagline: "스스로의 힘으로 증명하라",
+    overview:
+      "평범한 고등학생과 히어로 사이를 오가는 피터는 스스로의 힘으로 새로운 빌런을 막으려 해요.",
+    isBookmarked: false,
+  },
+  {
+    id: 13,
+    title: "어메이징 스파이더맨",
+    originalTitle: "The Amazing Spider-Man",
+    releaseDate: "2012.06.28",
+    posterPath: "/posters/search/the-amazing-spider-man.png",
+    backdropPath: "/posters/search/the-amazing-spider-man.png",
+    genres: ["액션", "모험", "SF"],
+    runtime: "2시간 16분",
+    tagline: "아무도 몰랐던 이야기가 시작된다",
+    overview:
+      "부모의 실종을 추적하던 피터는 코너스 박사의 연구실에서 사고를 겪고 특별한 능력을 얻어요.",
+    isBookmarked: false,
+  },
+  {
+    id: 14,
+    title: "스파이더맨 3",
+    originalTitle: "Spider-Man 3",
+    releaseDate: "2007.05.01",
+    posterPath: "/posters/search/spider-man-3.png",
+    backdropPath: "/posters/search/spider-man-3.png",
+    genres: ["액션", "모험", "SF"],
+    runtime: "2시간 19분",
+    tagline: "가장 큰 싸움은 내면에서 시작된다",
+    overview:
+      "심비오트에 감염된 피터는 강해진 힘에 도취되고, 뉴 고블린과 샌드맨의 위협을 동시에 마주해요.",
+    isBookmarked: false,
+  },
+];

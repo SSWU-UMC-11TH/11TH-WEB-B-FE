@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { spiderManSearchResults } from "../data/search-movies";
-import type { SearchMovie } from "../data/search-movies";
 import { SearchIcon, CloseIcon, ArrowRightIcon } from "./icons";
 import "./search-page.css";
 
 interface SearchPageProps {
-  onSelectMovie?: (movie: SearchMovie) => void;
+  onSelectMovie: (movieId: number) => void;
 }
 
 export default function SearchPage({ onSelectMovie }: SearchPageProps) {
@@ -29,15 +28,6 @@ export default function SearchPage({ onSelectMovie }: SearchPageProps) {
 
   function handleClear() {
     setKeyword("");
-  }
-
-  function handleSelect(movie: SearchMovie) {
-    // TODO: 검색 결과의 상세 화면 연동은 이후 주차에서 이어가요.
-    if (onSelectMovie) {
-      onSelectMovie(movie);
-    } else {
-      console.log("상세 보기:", movie.title);
-    }
   }
 
   if (submittedKeyword === null) {
@@ -110,7 +100,7 @@ export default function SearchPage({ onSelectMovie }: SearchPageProps) {
       ) : (
         <ul className="search-results__grid">
           {results.map((movie) => (
-            <li key={movie.id} className="search-result-card">
+            <li key={movie.movieId} className="search-result-card">
               <img
                 className="search-result-card__poster"
                 src={movie.posterUrl}
@@ -129,7 +119,7 @@ export default function SearchPage({ onSelectMovie }: SearchPageProps) {
                 <button
                   type="button"
                   className="search-result-card__link"
-                  onClick={() => handleSelect(movie)}
+                  onClick={() => onSelectMovie(movie.movieId)}
                 >
                   상세 보기
                   <ArrowRightIcon width={14} height={14} />
