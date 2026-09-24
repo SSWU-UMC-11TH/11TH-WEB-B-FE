@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import type { Movie } from '../types/movie'
 
 interface Props {
@@ -7,12 +7,32 @@ interface Props {
   onSelectMovie: (id: number) => void
 }
 
-import { useState } from 'react'
-
-export default function SearchResultsPage({ movies, query, onSelectMovie }: Props) {
+export default function SearchResultsPage({
+  movies,
+  query,
+  onSelectMovie,
+}: Props) {
   const [q, setQ] = useState(query)
-  const qTrim = q.trim().toLowerCase()
-  const results = qTrim ? movies.filter(m => m.title.toLowerCase().includes(qTrim) || m.originalTitle.toLowerCase().includes(qTrim)) : []
+  const [searchQuery, setSearchQuery] = useState(query)
+
+  const normalizedQuery = searchQuery.trim().toLowerCase()
+
+  const results = normalizedQuery
+    ? movies.filter(
+        (movie) =>
+          movie.title.toLowerCase().includes(normalizedQuery) ||
+          movie.originalTitle.toLowerCase().includes(normalizedQuery),
+      )
+    : []
+
+  const handleSearch = () => {
+    setSearchQuery(q.trim())
+  }
+
+  const handleClear = () => {
+    setQ('')
+    setSearchQuery('')
+  }
 
   return (
     <section className="container search-results">
@@ -23,34 +43,72 @@ export default function SearchResultsPage({ movies, query, onSelectMovie }: Prop
       <div className="search-top">
         <div className="search-toolbar">
           <div className="toolbar-input input-wrap">
-            <img src="/icons/search.svg" alt="search" />
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={query || '검색어를 입력하세요'} />
-            <button className="icon-btn clear-btn" onClick={() => setQ('')} aria-label="clear">
-              <img src="/icons/close.svg" alt="close" />
+            <img src="/icons/search.svg" alt="" />
+
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSearch()
+                }
+              }}
+              placeholder="검색어를 입력하세요"
+            />
+
+            <button
+              type="button"
+              className="icon-btn clear-btn"
+              onClick={handleClear}
+              aria-label="검색어 지우기"
+            >
+              <img src="/icons/close.svg" alt="" />
             </button>
-            <button className="primary search-black" onClick={() => { /* explicit search */ }}>다시 검색</button>
+
+            <button
+              type="button"
+              className="primary search-black"
+              onClick={handleSearch}
+            >
+              다시 검색
+            </button>
           </div>
         </div>
 
         <div className="search-summary">
-          <strong>'{query}' 검색 결과</strong>
+          <strong>'{searchQuery}' 검색 결과</strong>
           <span>영화 {results.length}편 · 1페이지</span>
         </div>
       </div>
 
       <div className="results-grid">
-        {results.map(r => (
-          <div key={r.id} className="result-item" onClick={() => onSelectMovie(r.id)}>
-            <img className="result-poster" src={r.posterPath} alt={r.title} />
+        {results.map((movie) => (
+          <div
+            key={movie.id}
+            className="result-item"
+            onClick={() => onSelectMovie(movie.id)}
+          >
+            <img
+              className="result-poster"
+              src={movie.posterPath}
+              alt={movie.title}
+            />
+
             <div className="result-body">
-              <div className="result-title">{r.title}</div>
-              <div className="result-sub">{r.originalTitle} · {r.releaseDate}</div>
-              <p className="result-overview">{r.overview}</p>
+              <div className="result-title">{movie.title}</div>
+
+              <div className="result-sub">
+                {movie.originalTitle} · {movie.releaseDate}
+              </div>
+
+              <p className="result-overview">{movie.overview}</p>
+
               <button
+                type="button"
                 className="result-detail-link"
                 onClick={(e) => {
                   e.stopPropagation()
-                  onSelectMovie(r.id)
+                  onSelectMovie(movie.id)
                 }}
               >
                 상세 보기
@@ -59,7 +117,10 @@ export default function SearchResultsPage({ movies, query, onSelectMovie }: Prop
             </div>
           </div>
         ))}
-        {results.length === 0 && <div className="no-movies">검색 결과가 없습니다.</div>}
+
+        {results.length === 0 && (
+          <div className="no-movies">검색 결과가 없습니다.</div>
+        )}
       </div>
     </section>
   )

@@ -102,6 +102,7 @@ export default function App() {
             movies={movies}
             onEdit={() => goTo('mypage-edit')}
             onSelectMovie={(id) => goTo('movie-detail', { movieId: id })}
+            onToggleBookmark={handleToggleBookmark}
           />
         )}
 

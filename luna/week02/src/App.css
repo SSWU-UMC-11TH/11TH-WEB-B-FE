@@ -52,27 +52,36 @@ main {
   align-items: center;
   gap: 36px
 }
-
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  cursor: pointer
+  gap: 8px;
+
+  padding: 0;
+  margin: 0;
+
+  background: transparent;
+  border: 0;
+
+  font: inherit;
+  color: inherit;
+
+  cursor: pointer;
 }
 
 .brand-mark {
   width: 24px;
-  height: 24px
+  height: 24px;
 }
 
 .brand-word {
-  width: 74px;
   height: 24px;
+  width: auto;
 }
 
 .main-nav {
   display: flex;
-  gap: 48px;
+  gap: 20px;
   align-items: center;
 }
 
