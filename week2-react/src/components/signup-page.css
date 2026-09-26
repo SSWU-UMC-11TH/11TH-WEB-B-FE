@@ -1,0 +1,143 @@
+/*
+ * 로그인 화면(login-page.css)에서 확정된 값을 그대로 이어받았어요.
+ * 회원가입 전용 요소(중복 확인 버튼, 비밀번호 안내 문구)는 아직 인스펙터 수치가 없어 추정치예요.
+ */
+.signup-page {
+  display: flex;
+  justify-content: center;
+  padding: 140px 24px 80px;
+}
+
+.signup-page__box {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 430px;
+}
+
+.signup-page__title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 41px;
+  letter-spacing: -0.02em;
+  color: #17191e;
+}
+
+.signup-page__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.signup-page__label {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 21px;
+  color: #17191e;
+}
+
+.signup-page__input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 48px;
+  padding: 0 16px;
+  border: 1px solid #e3e6eb;
+  border-radius: 10px;
+  background-color: #ffffff;
+}
+
+.signup-page__input-icon {
+  flex-shrink: 0;
+  color: #969da8;
+}
+
+.signup-page__input {
+  flex: 1;
+  height: 100%;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-family: inherit;
+  color: #17191e;
+  background: transparent;
+}
+
+.signup-page__input::placeholder {
+  color: #b0b6bf;
+}
+
+/* 중복 확인 버튼 글자: Pretendard ExtraBold 800 / 12px / 행간 100% / 자간 0 / color/action/primary(#2563EB) */
+.signup-page__check-button {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0;
+  color: #2563eb;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.signup-page__check-button:hover {
+  text-decoration: underline;
+}
+
+.signup-page__helper {
+  margin: 0;
+  font-size: 12px;
+  line-height: 18px;
+  color: #969da8;
+}
+
+.signup-page__submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  padding: 0 16px;
+  border: 1px solid #ffffff;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0;
+  color: #ffffff;
+  background-color: #2563eb;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.signup-page__submit:hover {
+  background-color: #1d4fd8;
+}
+
+.signup-page__login {
+  margin: 0;
+  padding-top: 5px;
+  text-align: center;
+  font-size: 13px;
+  line-height: 16px;
+  color: #606774;
+}
+
+.signup-page__login-link {
+  border: none;
+  background: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 16px;
+  color: #2563eb;
+  cursor: pointer;
+}

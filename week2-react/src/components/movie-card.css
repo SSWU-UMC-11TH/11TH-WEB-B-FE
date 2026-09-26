@@ -1,0 +1,104 @@
+/*
+ * Figma article.movie-card
+ *  - 흐름 세로, 너비 채우기(241.6px), 높이 허그(318px), 간격 4px
+ *  - 318 = 포스터 274 + 4 + 제목 20 + 4 + 개봉일 16
+ *  - 북마크 버튼 32x32, 상 10px / 우 11px, radius 8px
+ *  - 색상: 제목 color/text/primary #17191E, 개봉일 #969DA8
+ */
+.movie-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+}
+
+/* 제목 버튼의 클릭 영역을 카드 전체로 넓혀요. 북마크 버튼은 z-index로 그 위에 올려요. */
+.movie-card__select {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.movie-card__select::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+}
+
+.movie-card__select:focus-visible {
+  outline: none;
+}
+
+.movie-card__select:focus-visible::after {
+  outline: 2px solid #2563eb;
+  outline-offset: 4px;
+}
+
+.movie-card__poster {
+  position: relative;
+  aspect-ratio: 241.6 / 274;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #e9ecef;
+}
+
+.movie-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.movie-card__bookmark {
+  position: absolute;
+  z-index: 1;
+  top: 10px;
+  right: 11px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #17191e;
+  background-color: #ffffff;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.movie-card__bookmark[aria-pressed="true"] {
+  color: #ffffff;
+  background-color: #2563eb;
+}
+
+.movie-card__bookmark:hover {
+  opacity: 0.9;
+}
+
+.movie-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.movie-card__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 20px;
+  color: #17191e;
+}
+
+.movie-card__release-date {
+  margin: 0;
+  font-size: 12px;
+  line-height: 16px;
+  color: #969da8;
+}
