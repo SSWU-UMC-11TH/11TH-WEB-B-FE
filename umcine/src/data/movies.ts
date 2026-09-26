@@ -197,3 +197,6 @@ export const detailOnlyMovies: Movie[] = [
     isBookmarked: false,
   },
 ];
+
+// 목록 화면에는 movies 10편만 보여 주고, 검색과 상세 화면은 아래 전체 목록에서 찾아요.
+export const allMovies: Movie[] = [...movies, ...detailOnlyMovies];

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useParams } from "@tanstack/react-router";
-import { movies } from "../../data/movies";
+import { allMovies } from "../../data/movies";
 import {
   ChevronLeftIcon,
   BookmarkIcon,
@@ -14,7 +14,7 @@ const RATING_COUNT = 5;
 
 export function MovieDetailPage() {
   const { movieId } = useParams({ from: "/movies/$movieId" });
-  const movie = movies.find((item) => item.id === Number(movieId));
+  const movie = allMovies.find((item) => item.id === Number(movieId));
 
   const [isBookmarked, setIsBookmarked] = useState(movie?.isBookmarked ?? false);
   const [rating, setRating] = useState(0);
