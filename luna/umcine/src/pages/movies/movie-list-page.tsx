@@ -1,18 +1,18 @@
 import React from 'react'
-import type { Movie } from '../types/movie'
-import MovieGrid from '../components/movie-grid'
-import Pagination from '../components/pagination'
+import type { Movie } from '../../types/movie'
+import MovieGrid from '../../components/movies/movie-grid'
+import Pagination from '../../components/movies/pagination'
 
 interface Props {
   movies: Movie[]
   onToggleBookmark: (id: number) => void
-  onSelectMovie: (id: number) => void
+  onSelectMovie?: (id: number) => void
 }
 
 export default function MovieListPage({ movies, onToggleBookmark, onSelectMovie }: Props) {
   return (
-    <section className="container">
-      <h1 className="page-title">영화 목록</h1>
+    <section className="mx-auto max-w-[1200px] px-5 py-7">
+      <h1 className="mt-3 mb-5 text-[24px] font-extrabold">영화 목록</h1>
       <MovieGrid
         movies={movies}
         onToggleBookmark={onToggleBookmark}
