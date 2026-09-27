@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import './App.css'
-import Header from './components/header'
-import MovieGrid from './components/movie-grid'
-import Pagination from './components/pagination'
-import Footer from './components/footer'
+import Header from './components/layout/header'
+import MovieGrid from './components/movies/movie-grid'
+import Pagination from './components/movies/pagination'
+import Footer from './components/layout/footer'
 import { movies as initialMovies } from './data/movies'
 import type { Movie } from './types/movie'
-import MovieDetailPage from './pages/movie-detail-page'
-import MovieListPage from './pages/movie-list-page'
-import SearchPage from './pages/search-page'
+import { MovieDetailView as MovieDetailPage } from './pages/movies/movie-detail-page'
+import MovieListPage from './pages/movies/movie-list-page'
+import { LegacySearchPage as SearchPage } from './pages/movies/search-page'
 import SearchResultsPage from './pages/search-results-page'
 import LoginPage from './pages/login-page'
 import SignupPage from './pages/signup-page'
@@ -50,7 +50,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <Header currentPage={page} onNavigate={(p) => goTo(p)} user={user} />
+      <Header />
       <main>
         {page === 'movies' && (
           <MovieListPage
