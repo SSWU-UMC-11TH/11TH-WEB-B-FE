@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import type { Movie } from '../types/movie'
-import MovieCard from '../components/movie-card'
+import MovieCard from '../components/movies/movie-card'
 
 interface Props {
   user: { email: string; nickname: string } | null

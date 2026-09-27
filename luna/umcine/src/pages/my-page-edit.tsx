@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 interface Props {
   user: { email: string; nickname: string } | null
-  onSave: () => void
+  onSave: (updates: { nickname: string }) => void
 }
 
 export default function MyPageEdit({ user, onSave }: Props) {
@@ -15,7 +15,7 @@ export default function MyPageEdit({ user, onSave }: Props) {
           <h2>내 정보 수정</h2>
           <p>닉네임과 프로필 이미지만 변경할 수 있어요.</p>
         </div>
-        <button className="save-btn" onClick={onSave}>변경사항 저장</button>
+        <button className="save-btn" onClick={() => onSave({ nickname })}>변경사항 저장</button>
       </div>
       <div className="edit-main">
         <div className="edit-profile">
