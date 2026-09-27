@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import type { Movie } from "../../types/movie";
 
 interface MovieCardProps {
@@ -12,11 +13,13 @@ export default function MovieCard({
     return (
         <article className="movie-card">
             <div className="poster-wrapper">
-                <img
-                    src={movie.posterPath}
-                    alt={`${movie.title} 포스터`}
-                    className="movie-poster"
-                />
+
+                <Link
+                    to="/movies/$movieId"
+                    params={{ movieId: String(movie.id) }}
+                >
+                    <img src={movie.posterPath} alt={`${movie.title} 포스터`} />
+                </Link>
 
                 <button
                     type="button"

@@ -1,4 +1,4 @@
-import { useNavigate, useSearch } from "@tanstack/react-router";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect, useState, type SubmitEvent } from "react";
 import { movies } from "../../data/movies";
 
@@ -57,6 +57,13 @@ export function SearchPage() {
                                     <p>{movie.originalTitle}</p>
                                     <p>{movie.releaseDate}</p>
                                     <p>{movie.overview}</p>
+
+                                    <Link
+                                        to="/movies/$movieId"
+                                        params={{ movieId: String(movie.id) }}
+                                    >
+                                        상세 보기
+                                    </Link>
                                 </li>
                             ))}
                         </ul>
