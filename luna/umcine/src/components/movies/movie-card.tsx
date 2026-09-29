@@ -9,7 +9,11 @@ interface MovieCardProps {
   onSelect?: (movieId: number) => void
 }
 
-export default function MovieCard({ movie, onToggleBookmark, onSelect }: MovieCardProps) {
+export default function MovieCard({
+  movie,
+  onToggleBookmark = () => undefined,
+  onSelect,
+}: MovieCardProps) {
   const bookmarkIcon = movie.isBookmarked ? '/icons/bookmark.svg' : '/icons/bookmark-outline.svg'
   const btnClass = cn(
     'absolute top-3 right-3 flex size-[34px] cursor-pointer items-center justify-center rounded-lg border px-[6px] py-[7.5px]',

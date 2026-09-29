@@ -8,7 +8,11 @@ interface MovieGridProps {
   onSelectMovie?: (movieId: number) => void
 }
 
-export default function MovieGrid({ movies, onToggleBookmark, onSelectMovie }: MovieGridProps) {
+export default function MovieGrid({
+  movies,
+  onToggleBookmark = () => undefined,
+  onSelectMovie,
+}: MovieGridProps) {
   if (!movies || movies.length === 0) {
     return <div className="p-10 text-center text-[#6b7280]">표시할 영화가 없어요.</div>
   }

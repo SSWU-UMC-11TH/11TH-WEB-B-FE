@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { useMovies } from '../../contexts/movies-context'
+import { movies } from '../../data/movies'
 import type { Movie } from '../../types/movie'
 import { cn } from '../../utils/cn'
 
@@ -13,7 +13,6 @@ interface Props {
 export default function MovieDetailPage() {
   const { movieId } = useParams({ from: '/movies/$movieId' })
   const navigate = useNavigate()
-  const { movies, toggleBookmark } = useMovies()
   const movie = movies.find((movie) => movie.id === Number(movieId))
 
   if (!movie) return <main className="mx-auto w-full max-w-[1200px] px-5 py-7">영화를 찾을 수 없어요.</main>
@@ -24,13 +23,17 @@ export default function MovieDetailPage() {
         key={movie.id}
         movie={movie}
         onBack={() => void navigate({ to: '/' })}
-        onToggleBookmark={toggleBookmark}
+        onToggleBookmark={() => undefined}
       />
     </main>
   )
 }
 
-export function MovieDetailView({ movie, onBack, onToggleBookmark }: Props) {
+export function MovieDetailView({
+  movie,
+  onBack,
+  onToggleBookmark = () => undefined,
+}: Props) {
   const [rating, setRating] = useState<number>(0)
 
   return (

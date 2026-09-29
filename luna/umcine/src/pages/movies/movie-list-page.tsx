@@ -9,7 +9,11 @@ interface Props {
   onSelectMovie?: (id: number) => void
 }
 
-export default function MovieListPage({ movies, onToggleBookmark, onSelectMovie }: Props) {
+export default function MovieListPage({
+  movies,
+  onToggleBookmark = () => undefined,
+  onSelectMovie,
+}: Props) {
   return (
     <section className="mx-auto max-w-[1200px] px-5 py-7">
       <h1 className="mt-3 mb-5 text-[24px] font-extrabold">영화 목록</h1>
