@@ -5,13 +5,12 @@ import Pagination from '../../components/movies/pagination'
 
 interface Props {
   movies: Movie[]
-  onToggleBookmark: (id: number) => void
+  onToggleBookmark?: (id: number) => void
   onSelectMovie?: (id: number) => void
 }
 
 export default function MovieListPage({
   movies,
-  onToggleBookmark = () => undefined,
   onSelectMovie,
 }: Props) {
   return (
@@ -19,7 +18,6 @@ export default function MovieListPage({
       <h1 className="mt-3 mb-5 text-[24px] font-extrabold">영화 목록</h1>
       <MovieGrid
         movies={movies}
-        onToggleBookmark={onToggleBookmark}
         onSelectMovie={onSelectMovie}
       />
       <Pagination />

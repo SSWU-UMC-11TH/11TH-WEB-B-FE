@@ -1,46 +1,40 @@
 import React, { useState } from 'react'
-import { useNavigate, useParams } from '@tanstack/react-router'
+import { Link, useParams } from '@tanstack/react-router'
 import { movies } from '../../data/movies'
 import type { Movie } from '../../types/movie'
 import { cn } from '../../utils/cn'
 
 interface Props {
   movie: Movie
-  onBack: () => void
-  onToggleBookmark: (id: number) => void
+  onToggleBookmark?: (id: number) => void
 }
 
 export default function MovieDetailPage() {
   const { movieId } = useParams({ from: '/movies/$movieId' })
-  const navigate = useNavigate()
   const movie = movies.find((movie) => movie.id === Number(movieId))
 
   if (!movie) return <main className="mx-auto w-full max-w-[1200px] px-5 py-7">영화를 찾을 수 없어요.</main>
 
   return (
     <main>
-      <MovieDetailView
-        key={movie.id}
-        movie={movie}
-        onBack={() => void navigate({ to: '/' })}
-        onToggleBookmark={() => undefined}
-      />
+      <MovieDetailView key={movie.id} movie={movie} />
     </main>
   )
 }
 
-export function MovieDetailView({
-  movie,
-  onBack,
-  onToggleBookmark = () => undefined,
-}: Props) {
+export function MovieDetailView({ movie }: Props) {
   const [rating, setRating] = useState<number>(0)
 
   return (
     <section className="mx-auto w-full max-w-[1440px]">
       <div className="relative h-[360px] w-full">
         <img src={movie.backdropPath} alt={movie.title} className="h-[360px] w-full object-cover object-center saturate-[0.95]" />
-        <button className="absolute top-7 left-5 rounded-none border-0 bg-transparent p-0 font-[Arial] text-[14px] font-semibold leading-[normal] text-white min-[1024px]:left-20" onClick={onBack}>&lt; 영화 목록</button>
+        <Link
+          to="/"
+          className="absolute top-7 left-5 rounded-none border-0 bg-transparent p-0 font-[Arial] text-[14px] font-semibold leading-[normal] text-white no-underline min-[1024px]:left-20"
+        >
+          &lt; 영화 목록
+        </Link>
         <div className="absolute bottom-7 left-5 max-w-[calc(100%-40px)] text-white min-[1024px]:left-20 min-[1024px]:max-w-[60%]">
           <h2 className="m-0 text-[28px] leading-none font-extrabold min-[640px]:text-[36px]">{movie.title}</h2>
           <div>
@@ -65,10 +59,9 @@ export function MovieDetailView({
         <div className="min-w-0">
           <h2 className="mt-0 mb-[14px] text-[20px] leading-[1.4] font-bold text-[#17191e]">{movie.tagline}</h2>
           <p className="m-0 text-[14px] leading-[1.8] text-[#667085]">{movie.overview}</p>
-          <button
+          <span
             className="static mt-4 inline-flex cursor-pointer items-center justify-center gap-2 rounded-[6px] border-0 bg-[#2563eb] px-4 py-[10px] font-[Arial] text-[14px] font-bold leading-[normal] text-white"
             aria-pressed={movie.isBookmarked}
-            onClick={() => onToggleBookmark(movie.id)}
           >
             <img
               className="size-[18px] brightness-0 invert"
@@ -76,7 +69,7 @@ export function MovieDetailView({
               alt=""
             />
             즐겨찾기
-          </button>
+          </span>
         </div>
 
         <aside className="w-full border-t border-[#e5e7eb] pt-8 min-[640px]:col-span-2 min-[1200px]:col-span-1 min-[1200px]:w-80 min-[1200px]:border-t-0 min-[1200px]:border-l min-[1200px]:pt-0 min-[1200px]:pl-8">

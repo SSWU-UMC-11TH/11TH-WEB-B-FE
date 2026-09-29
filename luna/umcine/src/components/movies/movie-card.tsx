@@ -5,13 +5,12 @@ import { cn } from '../../utils/cn'
 
 interface MovieCardProps {
   movie: Movie
-  onToggleBookmark: (movieId: number) => void
+  onToggleBookmark?: (movieId: number) => void
   onSelect?: (movieId: number) => void
 }
 
 export default function MovieCard({
   movie,
-  onToggleBookmark = () => undefined,
   onSelect,
 }: MovieCardProps) {
   const bookmarkIcon = movie.isBookmarked ? '/icons/bookmark.svg' : '/icons/bookmark-outline.svg'
@@ -30,14 +29,13 @@ export default function MovieCard({
             <img className="poster block aspect-[2/3] w-full rounded-lg object-cover max-[640px]:h-[260px] max-[420px]:h-[420px]" src={movie.posterPath} alt={movie.title} />
           </Link>
         )}
-        <button
+        <span
           className={btnClass}
           aria-pressed={movie.isBookmarked}
           aria-label={movie.isBookmarked ? '북마크 해제' : '북마크 추가'}
-          onClick={() => onToggleBookmark(movie.id)}
         >
           <img className="block h-[19px] w-[22px] brightness-0 invert" src={bookmarkIcon} alt="bookmark" />
-        </button>
+        </span>
       </div>
       <div className="movie-info py-[10px]">
         <h3 className="movie-title mt-[6px] mb-1 cursor-pointer text-[15px] font-bold text-[#0f172a]">

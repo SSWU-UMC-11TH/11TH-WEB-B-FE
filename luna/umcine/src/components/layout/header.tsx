@@ -40,9 +40,7 @@ export default function Header() {
               검색
             </Link>
 
-            <button type="button" className={cn(menuClass, inactiveMenuClass)}>
-              내 정보
-            </button>
+            <span className={cn(menuClass, inactiveMenuClass)}>내 정보</span>
           </nav>
         </div>
 
@@ -56,12 +54,9 @@ export default function Header() {
             <img className="size-[18px]" src="/icons/search.svg" alt="" />
           </Link>
 
-          <button
-            type="button"
-            className="rounded-[10px] border-0 bg-[#2563eb] px-[18px] py-2 font-[Arial] text-[13.3333px] font-semibold leading-[normal] text-white"
-          >
+          <span className="rounded-[10px] border-0 bg-[#2563eb] px-[18px] py-2 font-[Arial] text-[13.3333px] font-semibold leading-[normal] text-white">
             로그인
-          </button>
+          </span>
         </div>
       </div>
     </header>
