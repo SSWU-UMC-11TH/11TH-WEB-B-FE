@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { Link, useParams } from '@tanstack/react-router'
 import { movies } from '../../data/movies'
+import { useBookmarkStore } from '../../stores/bookmark-store'
 import type { Movie } from '../../types/movie'
 import { cn } from '../../utils/cn'
 
 interface Props {
   movie: Movie
-  onToggleBookmark?: (id: number) => void
 }
 
 export default function MovieDetailPage() {
@@ -24,6 +24,8 @@ export default function MovieDetailPage() {
 
 export function MovieDetailView({ movie }: Props) {
   const [rating, setRating] = useState<number>(0)
+  const isBookmarked = useBookmarkStore((state) => state.bookmarkedMovieIds.includes(movie.id))
+  const toggleBookmark = useBookmarkStore((state) => state.toggleBookmark)
 
   return (
     <section className="mx-auto w-full max-w-[1440px]">
@@ -59,17 +61,20 @@ export function MovieDetailView({ movie }: Props) {
         <div className="min-w-0">
           <h2 className="mt-0 mb-[14px] text-[20px] leading-[1.4] font-bold text-[#17191e]">{movie.tagline}</h2>
           <p className="m-0 text-[14px] leading-[1.8] text-[#667085]">{movie.overview}</p>
-          <span
+          <button
+            type="button"
             className="static mt-4 inline-flex cursor-pointer items-center justify-center gap-2 rounded-[6px] border-0 bg-[#2563eb] px-4 py-[10px] font-[Arial] text-[14px] font-bold leading-[normal] text-white"
-            aria-pressed={movie.isBookmarked}
+            aria-pressed={isBookmarked}
+            aria-label={isBookmarked ? '북마크 해제' : '북마크 추가'}
+            onClick={() => toggleBookmark(movie.id)}
           >
             <img
               className="size-[18px] brightness-0 invert"
-              src={movie.isBookmarked ? '/icons/bookmark.svg' : '/icons/bookmark-outline.svg'}
+              src={isBookmarked ? '/icons/bookmark.svg' : '/icons/bookmark-outline.svg'}
               alt=""
             />
             즐겨찾기
-          </span>
+          </button>
         </div>
 
         <aside className="w-full border-t border-[#e5e7eb] pt-8 min-[640px]:col-span-2 min-[1200px]:col-span-1 min-[1200px]:w-80 min-[1200px]:border-t-0 min-[1200px]:border-l min-[1200px]:pt-0 min-[1200px]:pl-8">
