@@ -4,7 +4,6 @@ import MovieCard from './movie-card'
 
 interface MovieGridProps {
   movies: Movie[]
-  onToggleBookmark?: (movieId: number) => void
   onSelectMovie?: (movieId: number) => void
 }
 
