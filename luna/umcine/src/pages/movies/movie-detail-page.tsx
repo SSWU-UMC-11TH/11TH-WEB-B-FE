@@ -1,8 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { Link, useParams } from '@tanstack/react-router'
-import { movies } from '../../data/movies'
+import { getMovieDetail, isValidMovieId } from '../../api/movies'
+import { useMovieRequest } from '../../hooks/use-movie-request'
+import MovieImage from '../../components/movies/movie-image'
+import RequestStatus from '../../components/movies/request-status'
 import { useBookmarkStore } from '../../stores/bookmark-store'
-import type { Movie } from '../../types/movie'
+import type { MovieDetail as Movie } from '../../api/movies/models'
 import { cn } from '../../utils/cn'
 
 interface Props {
@@ -11,9 +14,13 @@ interface Props {
 
 export default function MovieDetailPage() {
   const { movieId } = useParams({ from: '/movies/$movieId' })
-  const movie = movies.find((movie) => movie.id === Number(movieId))
-
-  if (!movie) return <main className="mx-auto w-full max-w-[1200px] px-5 py-7">영화를 찾을 수 없어요.</main>
+  const valid = isValidMovieId(movieId)
+  const request = useCallback((signal: AbortSignal) => getMovieDetail(movieId, signal), [movieId])
+  const state = useMovieRequest(movieId, request, valid)
+  if (!valid) return <main><RequestStatus error="잘못된 영화 ID입니다. 양의 정수를 입력해 주세요." /></main>
+  if (state.status === 'error') return <main><RequestStatus error={state.error} /></main>
+  if (state.status !== 'success') return <main><RequestStatus /></main>
+  const movie = state.data
 
   return (
     <main>
@@ -30,7 +37,7 @@ export function MovieDetailView({ movie }: Props) {
   return (
     <section className="mx-auto w-full max-w-[1440px]">
       <div className="relative h-[360px] w-full">
-        <img src={movie.backdropPath} alt={movie.title} className="h-[360px] w-full object-cover object-center saturate-[0.95]" />
+        <MovieImage backdrop path={movie.backdrop_path} alt={movie.title} className="h-[360px] w-full object-cover object-center saturate-[0.95]" />
         <Link
           to="/"
           className="absolute top-7 left-5 rounded-none border-0 bg-transparent p-0 font-[Arial] text-[14px] font-semibold leading-[normal] text-white no-underline min-[1024px]:left-20"
@@ -40,22 +47,22 @@ export function MovieDetailView({ movie }: Props) {
         <div className="absolute bottom-7 left-5 max-w-[calc(100%-40px)] text-white min-[1024px]:left-20 min-[1024px]:max-w-[60%]">
           <h2 className="m-0 text-[28px] leading-none font-extrabold min-[640px]:text-[36px]">{movie.title}</h2>
           <div>
-            {movie.originalTitle}
+            {movie.original_title}
           </div>
 
           <div>
-            {movie.releaseDate}
+            {movie.release_date}
             {'  '}
-            {movie.genres.join(' · ')}
+            {movie.genres.map((genre) => genre.name).join(' · ')}
             {'  '}
-            {movie.runtime}
+            {movie.runtime ? `${movie.runtime}분` : '상영 시간 정보 없음'}
           </div>
         </div>
       </div>
 
       <div className="mx-auto grid max-w-[1440px] grid-cols-1 items-start gap-8 px-5 pt-5 pb-8 min-[640px]:grid-cols-[210px_minmax(0,1fr)] min-[1024px]:px-20 min-[1200px]:grid-cols-[210px_minmax(0,1fr)_320px]">
         <aside>
-          <img className="aspect-[2/3] w-[210px] max-w-full rounded-lg object-cover" src={movie.posterPath} alt={movie.title} />
+          <MovieImage className="aspect-[2/3] w-[210px] max-w-full rounded-lg object-cover" path={movie.poster_path} alt={movie.title} />
         </aside>
 
         <div className="min-w-0">

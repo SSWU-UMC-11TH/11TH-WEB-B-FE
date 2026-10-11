@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
-import { movies } from '../../data/movies'
+import { searchMovies } from '../../api/movies'
+import { useMovieRequest } from '../../hooks/use-movie-request'
+import MovieImage from '../../components/movies/movie-image'
+import RequestStatus from '../../components/movies/request-status'
 import { useBookmarkStore } from '../../stores/bookmark-store'
 
 export default function SearchPage() {
@@ -14,11 +17,10 @@ export default function SearchPage() {
     setQ(query ?? '')
   }, [query])
 
-  const normalizedQuery = (query ?? '').trim().toLowerCase()
-  const results = normalizedQuery ? movies.filter((movie) =>
-    movie.title.toLowerCase().includes(normalizedQuery) ||
-    movie.originalTitle.toLowerCase().includes(normalizedQuery),
-  ) : []
+  const normalizedQuery = (query ?? '').trim()
+  const request = useCallback((signal: AbortSignal) => searchMovies(normalizedQuery, signal), [normalizedQuery])
+  const state = useMovieRequest(normalizedQuery, request, Boolean(normalizedQuery))
+  const results = state.status === 'success' ? state.data.results : []
 
   function submit(event: React.FormEvent) {
     event.preventDefault()
@@ -42,9 +44,11 @@ export default function SearchPage() {
             </div>
           </form>
           <div className="mt-[14px] flex flex-wrap items-center justify-between gap-2 border-b border-[#e5e7eb] pb-[14px]" aria-live="polite">
-            {normalizedQuery ? <><strong className="text-[16px] font-bold text-[#17191e] break-words">'{query?.trim()}' 검색 결과</strong><span className="text-[12px] text-[#98a2b3]">영화 {results.length}개</span></> : <p className="my-4">검색어를 입력해 주세요.</p>}
+            {normalizedQuery ? <><strong className="text-[16px] font-bold text-[#17191e] break-words">'{query?.trim()}' 검색 결과</strong>{state.status === 'success' && <span className="text-[12px] text-[#98a2b3]">영화 {state.data.total_results}개</span>}</> : <p className="my-4">검색어를 입력해 주세요.</p>}
           </div>
         </div>
+        {state.status === 'loading' && <RequestStatus />}
+        {state.status === 'error' && <RequestStatus error={state.error} />}
         <div className="mt-[18px] grid grid-cols-1 items-start gap-x-10 gap-y-0 min-[901px]:grid-cols-2">
           {results.map((movie) => {
             const isBookmarked = bookmarkedMovieIds.includes(movie.id)
@@ -52,10 +56,10 @@ export default function SearchPage() {
             return (
               <div key={movie.id} className="relative flex w-full items-start gap-3 rounded-none border-0 border-b border-[#e5e7eb] bg-transparent py-5 text-inherit sm:gap-[18px]">
                 <Link className="flex min-w-0 flex-1 cursor-pointer items-start gap-3 text-inherit no-underline" to="/movies/$movieId" params={{ movieId: String(movie.id) }}>
-                  <img className="h-36 w-24 shrink-0 self-start rounded-lg object-cover sm:h-48 sm:w-32" src={movie.posterPath} alt={movie.title} />
+                  <MovieImage className="h-36 w-24 shrink-0 self-start rounded-lg object-cover sm:h-48 sm:w-32" path={movie.poster_path} alt={movie.title} />
                   <div className="flex min-w-0 flex-1 flex-col break-words">
                     <div className="font-bold">{movie.title}</div>
-                    <div className="mt-[6px] text-[13px] text-[#6b7280]">{movie.originalTitle} · {movie.releaseDate}</div>
+                    <div className="mt-[6px] text-[13px] text-[#6b7280]">{movie.original_title} · {movie.release_date}</div>
                     <p className="mt-2 mb-[13px] text-[13px] text-[#6b7280]">{movie.overview}</p>
                     <span className="mt-3 inline-flex cursor-pointer items-center gap-[6px] border-0 bg-transparent p-0 text-[13px] leading-none font-bold whitespace-nowrap text-[#2563eb]">상세 보기<img className="size-[14px]" src="/icons/arrow-right.svg" alt="" /></span>
                   </div>
@@ -76,7 +80,7 @@ export default function SearchPage() {
               </div>
             )
           })}
-          {normalizedQuery && results.length === 0 && <p className="my-4 p-10 text-center text-[#6b7280]">검색 결과가 없어요.</p>}
+          {state.status === 'success' && results.length === 0 && <p className="my-4 p-10 text-center text-[#6b7280]">검색 결과가 없어요.</p>}
         </div>
       </section>
     </main>
