@@ -1,6 +1,7 @@
 import React from 'react'
+import MovieImage from './movie-image'
 import { Link } from '@tanstack/react-router'
-import type { Movie } from '../../types/movie'
+import type { MovieSummary as Movie } from '../../api/movies/models'
 import { useBookmarkStore } from '../../stores/bookmark-store'
 import { cn } from '../../utils/cn'
 
@@ -32,10 +33,10 @@ export default function MovieCard({
     <article className="overflow-visible rounded-lg bg-transparent">
       <div className="relative">
         {onSelect ? (
-          <img className="poster block aspect-[2/3] w-full cursor-pointer rounded-lg object-cover max-[640px]:h-[260px] max-[420px]:h-[420px]" src={movie.posterPath} alt={movie.title} onClick={() => onSelect(movie.id)} />
+          <MovieImage className="poster block aspect-[2/3] w-full cursor-pointer rounded-lg object-cover max-[640px]:h-[260px] max-[420px]:h-[420px]" path={movie.poster_path} alt={movie.title} onClick={() => onSelect(movie.id)} />
         ) : (
           <Link className="text-inherit no-underline" to="/movies/$movieId" params={{ movieId: String(movie.id) }}>
-            <img className="poster block aspect-[2/3] w-full rounded-lg object-cover max-[640px]:h-[260px] max-[420px]:h-[420px]" src={movie.posterPath} alt={movie.title} />
+            <MovieImage className="poster block aspect-[2/3] w-full rounded-lg object-cover max-[640px]:h-[260px] max-[420px]:h-[420px]" path={movie.poster_path} alt={movie.title} />
           </Link>
         )}
         <button
@@ -56,7 +57,7 @@ export default function MovieCard({
             <Link className="text-inherit no-underline" to="/movies/$movieId" params={{ movieId: String(movie.id) }}>{movie.title}</Link>
           )}
         </h3>
-        <div className="movie-release text-[13px] text-[#6b7280]">{movie.releaseDate}</div>
+        <div className="movie-release text-[13px] text-[#6b7280]">{movie.release_date}</div>
       </div>
     </article>
   )
