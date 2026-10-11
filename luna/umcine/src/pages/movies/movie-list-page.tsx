@@ -5,7 +5,6 @@ import Pagination from '../../components/movies/pagination'
 
 interface Props {
   movies: Movie[]
-  onToggleBookmark?: (id: number) => void
   onSelectMovie?: (id: number) => void
 }
 
