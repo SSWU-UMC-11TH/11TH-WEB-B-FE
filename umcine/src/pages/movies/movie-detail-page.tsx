@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Link, useParams } from "@tanstack/react-router";
-import { allMovies } from "../../data/movies";
+import { getMovieDetail } from "../../api/movies/get-movie-detail";
+import type { TmdbMovieDetail } from "../../api/movies/models";
 import {
   ChevronLeftIcon,
   BookmarkIcon,
@@ -9,38 +10,105 @@ import {
   StarOutlineIcon,
 } from "../../components/icons";
 import { cn } from "../../utils/cn";
+import { formatReleaseDate } from "../../utils/movies/format-release-date";
+import { formatRuntime } from "../../utils/movies/format-runtime";
+import { getMovieDetailErrorMessage } from "../../utils/movies/get-movie-detail-error-message";
+import {
+  getTmdbBackdropUrl,
+  getTmdbPosterUrl,
+} from "../../utils/movies/tmdb-image";
+import { useBookmarkStore } from "../../stores/bookmark-store";
 
 const RATING_COUNT = 5;
 
 export function MovieDetailPage() {
   const { movieId } = useParams({ from: "/movies/$movieId" });
-  const movie = allMovies.find((item) => item.id === Number(movieId));
+  const parsedMovieId = Number(movieId);
+  const isValidMovieId = Number.isInteger(parsedMovieId) && parsedMovieId > 0;
 
-  const [isBookmarked, setIsBookmarked] = useState(movie?.isBookmarked ?? false);
+  const [movie, setMovie] = useState<TmdbMovieDetail | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const isBookmarked = useBookmarkStore((state) =>
+    state.bookmarkedMovieIds.includes(parsedMovieId),
+  );
+  const toggleBookmark = useBookmarkStore((state) => state.toggleBookmark);
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
 
-  if (!movie) {
+  useEffect(() => {
+    let ignore = false;
+
+    async function loadMovie() {
+      setMovie(null);
+      setErrorMessage(null);
+
+      // 유효하지 않은 영화 번호라면 요청하지 않아요.
+      if (!isValidMovieId) {
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+
+      try {
+        const response = await getMovieDetail(parsedMovieId);
+        if (!ignore) setMovie(response);
+      } catch (error) {
+        if (!ignore) setErrorMessage(getMovieDetailErrorMessage(error));
+      } finally {
+        if (!ignore) setIsLoading(false);
+      }
+    }
+
+    loadMovie();
+
+    return () => {
+      ignore = true;
+    };
+  }, [parsedMovieId, isValidMovieId]);
+
+  if (!isValidMovieId) {
+    return <DetailMessage>올바르지 않은 영화 번호예요.</DetailMessage>;
+  }
+
+  if (isLoading) {
+    return <DetailMessage>영화 정보를 불러오는 중이에요.</DetailMessage>;
+  }
+
+  if (errorMessage || !movie) {
     return (
-      <main className="mx-auto w-full max-w-[1440px] px-6 py-20 text-center text-[#606774] md:px-20">
-        영화를 찾을 수 없어요.
-      </main>
+      <DetailMessage>
+        {errorMessage ?? "영화 정보를 불러오지 못했어요."}
+      </DetailMessage>
     );
   }
+
+  const backdropUrl = getTmdbBackdropUrl(movie.backdrop_path);
+  const posterUrl = getTmdbPosterUrl(movie.poster_path);
 
   function handleSaveRating() {
     if (rating === 0) return;
     // TODO: 실제 평점 저장 API 연동은 이후 주차에서 이어가요.
-    console.log("평점 저장:", { movieId: movie!.id, rating, review });
+    console.log("평점 저장:", { movieId: parsedMovieId, rating, review });
   }
 
   return (
     <main className="mx-auto w-full max-w-[1440px] px-6 pb-10 md:px-20">
       {/* 히어로 영역은 본문 좌우 여백을 상쇄해 화면 끝까지 채워요. */}
-      <section
-        className="relative -mx-6 aspect-[1440/360] overflow-hidden bg-[#17191e] bg-cover bg-center md:-mx-20"
-        style={{ backgroundImage: `url(${movie.backdropPath})` }}
-      >
+      <section className="relative -mx-6 aspect-[1440/360] overflow-hidden bg-[#606774] md:-mx-20">
+        {backdropUrl ? (
+          <img
+            className="absolute inset-0 h-full w-full object-cover"
+            src={backdropUrl}
+            alt=""
+          />
+        ) : (
+          <div className="absolute inset-0 grid place-items-center text-sm text-white/70">
+            이미지 없음
+          </div>
+        )}
         <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/15 to-transparent" />
 
         <Link
@@ -55,32 +123,40 @@ export function MovieDetailPage() {
           <h1 className="text-[32px] font-extrabold tracking-[-0.02em] text-white">
             {movie.title}
           </h1>
-          <p className="text-sm text-white/75">{movie.originalTitle}</p>
+          <p className="text-sm text-white/75">{movie.original_title}</p>
           <p className="flex flex-wrap items-center gap-2 text-[13px] font-bold text-white/90">
-            <span>{movie.releaseDate}</span>
+            <span>{formatReleaseDate(movie.release_date)}</span>
             <span className="text-white/50" aria-hidden="true">·</span>
-            <span>{movie.genres.join(" · ")}</span>
+            <span>{movie.genres.map((genre) => genre.name).join(", ")}</span>
             <span className="text-white/50" aria-hidden="true">·</span>
-            <span>{movie.runtime}</span>
+            <span>{formatRuntime(movie.runtime)}</span>
           </p>
         </div>
       </section>
 
       <div className="grid items-start gap-8 pt-8 lg:grid-cols-[200px_1fr_360px]">
         <div className="flex max-w-[220px] flex-col gap-3 lg:-mt-[17px] lg:max-w-none">
-          <img
-            className="block h-[286px] w-[200px] rounded-[10px] bg-[#f6f7f9] object-cover"
-            src={movie.posterPath}
-            alt={`${movie.title} 포스터`}
-          />
+          {posterUrl ? (
+            <img
+              className="block h-[286px] w-[200px] rounded-[10px] bg-[#f6f7f9] object-cover"
+              src={posterUrl}
+              alt={`${movie.title} 포스터`}
+            />
+          ) : (
+            <div className="grid h-[286px] w-[200px] place-items-center rounded-[10px] bg-[#e9ecef] text-xs text-[#969da8]">
+              이미지 없음
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col items-start gap-3">
-          <h2 className="text-[21px] font-bold leading-none tracking-[-0.63px] text-[#17191e]">
-            {movie.tagline}
-          </h2>
+          {movie.tagline && (
+            <h2 className="text-[21px] font-bold leading-none tracking-[-0.63px] text-[#17191e]">
+              {movie.tagline}
+            </h2>
+          )}
           <p className="whitespace-pre-line text-sm leading-6 text-[#606774]">
-            {movie.overview}
+            {movie.overview || "줄거리 정보가 없어요."}
           </p>
           <button
             type="button"
@@ -91,7 +167,7 @@ export function MovieDetailPage() {
                 : "bg-[#606774] hover:bg-[#4b515c]",
             )}
             aria-pressed={isBookmarked}
-            onClick={() => setIsBookmarked((current) => !current)}
+            onClick={() => toggleBookmark(parsedMovieId)}
           >
             {isBookmarked ? (
               <BookmarkIcon width={16} height={16} />
@@ -148,6 +224,14 @@ export function MovieDetailPage() {
           </button>
         </div>
       </div>
+    </main>
+  );
+}
+
+function DetailMessage({ children }: { children: ReactNode }) {
+  return (
+    <main className="mx-auto w-full max-w-[1440px] px-6 py-20 text-center text-[#606774] md:px-20">
+      {children}
     </main>
   );
 }

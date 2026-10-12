@@ -1,40 +1,54 @@
 import { Link } from "@tanstack/react-router";
-import type { Movie } from "../../types/movie";
+import type { TmdbMovieListItem } from "../../api/movies/models";
 import { BookmarkIcon, BookmarkOutlineIcon } from "../icons";
 import { cn } from "../../utils/cn";
+import { formatReleaseDate } from "../../utils/movies/format-release-date";
+import { getTmdbPosterUrl } from "../../utils/movies/tmdb-image";
+import { useBookmarkStore } from "../../stores/bookmark-store";
 
 interface MovieCardProps {
-  movie: Movie;
-  onToggleBookmark: (movieId: number) => void;
+  movie: TmdbMovieListItem;
 }
 
-export function MovieCard({ movie, onToggleBookmark }: MovieCardProps) {
+export function MovieCard({ movie }: MovieCardProps) {
+  const isBookmarked = useBookmarkStore((state) =>
+    state.bookmarkedMovieIds.includes(movie.id),
+  );
+  const toggleBookmark = useBookmarkStore((state) => state.toggleBookmark);
+  const posterUrl = getTmdbPosterUrl(movie.poster_path);
+
   return (
     <article className="relative flex flex-col gap-1">
       <div className="relative aspect-[241.6/274] overflow-hidden rounded-lg bg-[#e9ecef]">
-        <img
-          className="block h-full w-full object-cover"
-          src={movie.posterPath}
-          alt={`${movie.title} 포스터`}
-          loading="lazy"
-        />
+        {posterUrl ? (
+          <img
+            className="block h-full w-full object-cover"
+            src={posterUrl}
+            alt={`${movie.title} 포스터`}
+            loading="lazy"
+          />
+        ) : (
+          <div className="grid h-full w-full place-items-center text-xs text-[#969da8]">
+            이미지 없음
+          </div>
+        )}
         <button
           type="button"
           className={cn(
             "absolute right-[11px] top-[10px] z-10 grid h-8 w-8 place-items-center rounded-lg transition-colors hover:opacity-90",
-            movie.isBookmarked
+            isBookmarked
               ? "bg-blue-600 text-white"
               : "bg-white text-[#17191e]",
           )}
-          aria-pressed={movie.isBookmarked}
+          aria-pressed={isBookmarked}
           aria-label={
-            movie.isBookmarked
+            isBookmarked
               ? `${movie.title} 북마크 해제`
               : `${movie.title} 북마크 추가`
           }
-          onClick={() => onToggleBookmark(movie.id)}
+          onClick={() => toggleBookmark(movie.id)}
         >
-          {movie.isBookmarked ? (
+          {isBookmarked ? (
             <BookmarkIcon width={16} height={16} />
           ) : (
             <BookmarkOutlineIcon width={16} height={16} />
@@ -53,7 +67,7 @@ export function MovieCard({ movie, onToggleBookmark }: MovieCardProps) {
             {movie.title}
           </Link>
         </h3>
-        <p className="text-xs leading-4 text-[#969da8]">{movie.releaseDate}</p>
+        <p className="text-xs leading-4 text-[#969da8]">{formatReleaseDate(movie.release_date)}</p>
       </div>
     </article>
   );

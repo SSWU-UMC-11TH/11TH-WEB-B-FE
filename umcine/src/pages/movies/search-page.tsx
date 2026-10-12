@@ -1,7 +1,18 @@
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect, useState, type SubmitEvent } from "react";
-import { allMovies } from "../../data/movies";
-import { SearchIcon, CloseIcon, ArrowRightIcon } from "../../components/icons";
+import type { TmdbMovieListItem } from "../../api/movies/models";
+import { searchMovies } from "../../api/movies/search-movies";
+import {
+  SearchIcon,
+  CloseIcon,
+  ArrowRightIcon,
+  BookmarkIcon,
+  BookmarkOutlineIcon,
+} from "../../components/icons";
+import { cn } from "../../utils/cn";
+import { formatReleaseDate } from "../../utils/movies/format-release-date";
+import { getTmdbPosterUrl } from "../../utils/movies/tmdb-image";
+import { useBookmarkStore } from "../../stores/bookmark-store";
 
 export function SearchPage() {
   const { query } = useSearch({ from: "/search" });
@@ -12,14 +23,42 @@ export function SearchPage() {
     setSearchText(query ?? "");
   }, [query]);
 
-  const normalizedQuery = query?.trim().toLowerCase() ?? "";
-  const searchResults = normalizedQuery
-    ? allMovies.filter(
-        (movie) =>
-          movie.title.toLowerCase().includes(normalizedQuery) ||
-          movie.originalTitle.toLowerCase().includes(normalizedQuery),
-      )
-    : [];
+  const [movies, setMovies] = useState<TmdbMovieListItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const normalizedQuery = query?.trim() ?? "";
+
+  useEffect(() => {
+    let ignore = false;
+
+    setMovies([]);
+    setErrorMessage(null);
+
+    // 빈 검색어라면 요청하지 않아요.
+    if (!normalizedQuery) {
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+
+    searchMovies({ query: normalizedQuery })
+      .then((response) => {
+        if (!ignore) setMovies(response.results);
+      })
+      .catch(() => {
+        if (!ignore) setErrorMessage("검색 결과를 불러오지 못했어요.");
+      })
+      .finally(() => {
+        if (!ignore) setIsLoading(false);
+      });
+
+    // 검색어가 바뀌면 이전 응답이 현재 검색 결과를 덮어쓰지 못하게 해요.
+    return () => {
+      ignore = true;
+    };
+  }, [normalizedQuery]);
 
   function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -101,47 +140,117 @@ export function SearchPage() {
         <h2 className="text-xl font-bold text-[#17191e]">
           ‘{query}’ 검색 결과
         </h2>
-        <p className="text-sm text-[#969da8]">영화 {searchResults.length}편</p>
+        {!isLoading && !errorMessage && (
+          <p className="text-sm text-[#969da8]">영화 {movies.length}편</p>
+        )}
       </div>
 
-      {searchResults.length === 0 ? (
-        <p className="py-16 text-center text-[#8b929c]">검색 결과가 없어요.</p>
+      {isLoading ? (
+        <p className="py-16 text-center text-[#8b929c]">
+          검색 결과를 불러오는 중이에요.
+        </p>
+      ) : errorMessage ? (
+        <p className="py-16 text-center text-[#8b929c]" role="alert">
+          {errorMessage}
+        </p>
+      ) : movies.length === 0 ? (
+        <p className="py-16 text-center text-[#8b929c]">
+          조건에 맞는 영화가 없어요.
+        </p>
       ) : (
         <ul className="grid list-none grid-cols-1 gap-x-10 gap-y-6 p-0 lg:grid-cols-2">
-          {searchResults.map((movie) => (
+          {movies.map((movie) => (
             <li
               key={movie.id}
               className="flex gap-4 border-b border-[#ebedf0] pb-6 last:border-b-0 last:pb-0"
             >
-              <img
-                className="h-[190px] w-[126px] shrink-0 rounded-lg bg-[#e9ecef] object-cover"
-                src={movie.posterPath}
-                alt={`${movie.title} 포스터`}
-              />
+              <SearchPoster posterPath={movie.poster_path} title={movie.title} />
 
               <div className="flex min-w-0 flex-col gap-1.5">
                 <h3 className="text-lg font-bold text-[#17191e]">{movie.title}</h3>
                 <p className="flex items-center gap-1.5 text-[13px] text-[#969da8]">
-                  <span className="truncate">{movie.originalTitle}</span>
+                  <span className="truncate">{movie.original_title}</span>
                   <span className="text-[#c9ced6]" aria-hidden="true">·</span>
-                  <span className="shrink-0">{movie.releaseDate}</span>
+                  <span className="shrink-0">{formatReleaseDate(movie.release_date)}</span>
                 </p>
                 <p className="mb-0.5 mt-1 line-clamp-2 text-sm leading-relaxed text-[#606774]">
                   {movie.overview}
                 </p>
-                <Link
-                  to="/movies/$movieId"
-                  params={{ movieId: String(movie.id) }}
-                  className="mt-1 flex items-center gap-1 self-start text-xs font-extrabold leading-none text-[#2563eb] hover:underline"
-                >
-                  상세 보기
-                  <ArrowRightIcon width={14} height={14} />
-                </Link>
+                <div className="mt-1 flex items-center gap-3">
+                  <SearchBookmarkButton movieId={movie.id} title={movie.title} />
+                  <Link
+                    to="/movies/$movieId"
+                    params={{ movieId: String(movie.id) }}
+                    className="flex items-center gap-1 text-xs font-extrabold leading-none text-[#2563eb] hover:underline"
+                  >
+                    상세 보기
+                    <ArrowRightIcon width={14} height={14} />
+                  </Link>
+                </div>
               </div>
             </li>
           ))}
         </ul>
       )}
     </main>
+  );
+}
+
+interface SearchPosterProps {
+  posterPath: string | null;
+  title: string;
+}
+
+function SearchPoster({ posterPath, title }: SearchPosterProps) {
+  const posterUrl = getTmdbPosterUrl(posterPath);
+
+  if (!posterUrl) {
+    return (
+      <div className="grid h-[190px] w-[126px] shrink-0 place-items-center rounded-lg bg-[#e9ecef] text-xs text-[#969da8]">
+        이미지 없음
+      </div>
+    );
+  }
+
+  return (
+    <img
+      className="h-[190px] w-[126px] shrink-0 rounded-lg bg-[#e9ecef] object-cover"
+      src={posterUrl}
+      alt={`${title} 포스터`}
+    />
+  );
+}
+
+interface SearchBookmarkButtonProps {
+  movieId: number;
+  title: string;
+}
+
+function SearchBookmarkButton({ movieId, title }: SearchBookmarkButtonProps) {
+  const isBookmarked = useBookmarkStore((state) =>
+    state.bookmarkedMovieIds.includes(movieId),
+  );
+  const toggleBookmark = useBookmarkStore((state) => state.toggleBookmark);
+
+  return (
+    <button
+      type="button"
+      className={cn(
+        "flex h-7 items-center gap-1 rounded-md px-2.5 text-xs font-bold transition-colors",
+        isBookmarked
+          ? "bg-blue-600 text-white hover:bg-blue-700"
+          : "border border-[#e3e6eb] bg-white text-[#17191e] hover:border-[#c9ced6]",
+      )}
+      aria-pressed={isBookmarked}
+      aria-label={isBookmarked ? `${title} 북마크 해제` : `${title} 북마크 추가`}
+      onClick={() => toggleBookmark(movieId)}
+    >
+      {isBookmarked ? (
+        <BookmarkIcon width={14} height={14} />
+      ) : (
+        <BookmarkOutlineIcon width={14} height={14} />
+      )}
+      북마크
+    </button>
   );
 }
