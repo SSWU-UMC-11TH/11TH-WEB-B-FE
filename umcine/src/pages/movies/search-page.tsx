@@ -1,7 +1,15 @@
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect, useState, type SubmitEvent } from "react";
 import { allMovies } from "../../data/movies";
-import { SearchIcon, CloseIcon, ArrowRightIcon } from "../../components/icons";
+import {
+  SearchIcon,
+  CloseIcon,
+  ArrowRightIcon,
+  BookmarkIcon,
+  BookmarkOutlineIcon,
+} from "../../components/icons";
+import { cn } from "../../utils/cn";
+import { useBookmarkStore } from "../../stores/bookmark-store";
 
 export function SearchPage() {
   const { query } = useSearch({ from: "/search" });
@@ -129,19 +137,56 @@ export function SearchPage() {
                 <p className="mb-0.5 mt-1 line-clamp-2 text-sm leading-relaxed text-[#606774]">
                   {movie.overview}
                 </p>
-                <Link
-                  to="/movies/$movieId"
-                  params={{ movieId: String(movie.id) }}
-                  className="mt-1 flex items-center gap-1 self-start text-xs font-extrabold leading-none text-[#2563eb] hover:underline"
-                >
-                  상세 보기
-                  <ArrowRightIcon width={14} height={14} />
-                </Link>
+                <div className="mt-1 flex items-center gap-3">
+                  <SearchBookmarkButton movieId={movie.id} title={movie.title} />
+                  <Link
+                    to="/movies/$movieId"
+                    params={{ movieId: String(movie.id) }}
+                    className="flex items-center gap-1 text-xs font-extrabold leading-none text-[#2563eb] hover:underline"
+                  >
+                    상세 보기
+                    <ArrowRightIcon width={14} height={14} />
+                  </Link>
+                </div>
               </div>
             </li>
           ))}
         </ul>
       )}
     </main>
+  );
+}
+
+interface SearchBookmarkButtonProps {
+  movieId: number;
+  title: string;
+}
+
+function SearchBookmarkButton({ movieId, title }: SearchBookmarkButtonProps) {
+  const isBookmarked = useBookmarkStore((state) =>
+    state.bookmarkedMovieIds.includes(movieId),
+  );
+  const toggleBookmark = useBookmarkStore((state) => state.toggleBookmark);
+
+  return (
+    <button
+      type="button"
+      className={cn(
+        "flex h-7 items-center gap-1 rounded-md px-2.5 text-xs font-bold transition-colors",
+        isBookmarked
+          ? "bg-blue-600 text-white hover:bg-blue-700"
+          : "border border-[#e3e6eb] bg-white text-[#17191e] hover:border-[#c9ced6]",
+      )}
+      aria-pressed={isBookmarked}
+      aria-label={isBookmarked ? `${title} 북마크 해제` : `${title} 북마크 추가`}
+      onClick={() => toggleBookmark(movieId)}
+    >
+      {isBookmarked ? (
+        <BookmarkIcon width={14} height={14} />
+      ) : (
+        <BookmarkOutlineIcon width={14} height={14} />
+      )}
+      북마크
+    </button>
   );
 }

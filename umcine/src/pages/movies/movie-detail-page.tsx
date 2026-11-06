@@ -9,6 +9,7 @@ import {
   StarOutlineIcon,
 } from "../../components/icons";
 import { cn } from "../../utils/cn";
+import { useBookmarkStore } from "../../stores/bookmark-store";
 
 const RATING_COUNT = 5;
 
@@ -16,7 +17,10 @@ export function MovieDetailPage() {
   const { movieId } = useParams({ from: "/movies/$movieId" });
   const movie = allMovies.find((item) => item.id === Number(movieId));
 
-  const [isBookmarked, setIsBookmarked] = useState(movie?.isBookmarked ?? false);
+  const isBookmarked = useBookmarkStore((state) =>
+    state.bookmarkedMovieIds.includes(Number(movieId)),
+  );
+  const toggleBookmark = useBookmarkStore((state) => state.toggleBookmark);
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
 
@@ -91,7 +95,7 @@ export function MovieDetailPage() {
                 : "bg-[#606774] hover:bg-[#4b515c]",
             )}
             aria-pressed={isBookmarked}
-            onClick={() => setIsBookmarked((current) => !current)}
+            onClick={() => toggleBookmark(movie.id)}
           >
             {isBookmarked ? (
               <BookmarkIcon width={16} height={16} />
