@@ -1,7 +1,7 @@
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect, useState, type SubmitEvent } from "react";
-import type { TmdbMovieListItem } from "../../api/movies/models";
-import { searchMovies } from "../../api/movies/search-movies";
+import { useQuery } from "@tanstack/react-query";
+import { movieQueries } from "../../api/movies/movie-queries";
 import {
   SearchIcon,
   CloseIcon,
@@ -23,42 +23,15 @@ export function SearchPage() {
     setSearchText(query ?? "");
   }, [query]);
 
-  const [movies, setMovies] = useState<TmdbMovieListItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
   const normalizedQuery = query?.trim() ?? "";
 
-  useEffect(() => {
-    let ignore = false;
+  // 검색어를 key에 넣어 검색어마다 캐시를 따로 저장하고, 빈 검색어면 요청하지 않아요.
+  const searchQuery = useQuery({
+    ...movieQueries.search(normalizedQuery),
+    enabled: normalizedQuery.length > 0,
+  });
 
-    setMovies([]);
-    setErrorMessage(null);
-
-    // 빈 검색어라면 요청하지 않아요.
-    if (!normalizedQuery) {
-      setIsLoading(false);
-      return;
-    }
-
-    setIsLoading(true);
-
-    searchMovies({ query: normalizedQuery })
-      .then((response) => {
-        if (!ignore) setMovies(response.results);
-      })
-      .catch(() => {
-        if (!ignore) setErrorMessage("검색 결과를 불러오지 못했어요.");
-      })
-      .finally(() => {
-        if (!ignore) setIsLoading(false);
-      });
-
-    // 검색어가 바뀌면 이전 응답이 현재 검색 결과를 덮어쓰지 못하게 해요.
-    return () => {
-      ignore = true;
-    };
-  }, [normalizedQuery]);
+  const searchResults = searchQuery.data?.results ?? [];
 
   function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -140,26 +113,26 @@ export function SearchPage() {
         <h2 className="text-xl font-bold text-[#17191e]">
           ‘{query}’ 검색 결과
         </h2>
-        {!isLoading && !errorMessage && (
-          <p className="text-sm text-[#969da8]">영화 {movies.length}편</p>
+        {searchQuery.isSuccess && (
+          <p className="text-sm text-[#969da8]">영화 {searchResults.length}편</p>
         )}
       </div>
 
-      {isLoading ? (
+      {searchQuery.isLoading ? (
         <p className="py-16 text-center text-[#8b929c]">
           검색 결과를 불러오는 중이에요.
         </p>
-      ) : errorMessage ? (
+      ) : searchQuery.isError ? (
         <p className="py-16 text-center text-[#8b929c]" role="alert">
-          {errorMessage}
+          검색 결과를 불러오지 못했어요.
         </p>
-      ) : movies.length === 0 ? (
+      ) : searchQuery.isSuccess && searchResults.length === 0 ? (
         <p className="py-16 text-center text-[#8b929c]">
           조건에 맞는 영화가 없어요.
         </p>
       ) : (
         <ul className="grid list-none grid-cols-1 gap-x-10 gap-y-6 p-0 lg:grid-cols-2">
-          {movies.map((movie) => (
+          {searchResults.map((movie) => (
             <li
               key={movie.id}
               className="flex gap-4 border-b border-[#ebedf0] pb-6 last:border-b-0 last:pb-0"

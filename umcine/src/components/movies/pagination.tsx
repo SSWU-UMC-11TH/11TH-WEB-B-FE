@@ -7,6 +7,8 @@ interface PaginationProps {
   onChangePage: (page: number) => void;
 }
 
+const MAX_VISIBLE_PAGES = 5;
+
 const buttonClass =
   "flex h-9 min-w-9 items-center justify-center rounded-lg border border-[#e3e6eb] bg-white px-[10px] text-sm text-[#606774] transition-colors";
 
@@ -15,7 +17,13 @@ export function Pagination({
   totalPages,
   onChangePage,
 }: PaginationProps) {
-  const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
+  // 전체 페이지가 많아도 현재 페이지 주변의 번호만 보여 줘요.
+  const visibleCount = Math.min(MAX_VISIBLE_PAGES, totalPages);
+  const firstPage = Math.min(
+    Math.max(1, currentPage - Math.floor(MAX_VISIBLE_PAGES / 2)),
+    totalPages - visibleCount + 1,
+  );
+  const pages = Array.from({ length: visibleCount }, (_, index) => firstPage + index);
 
   return (
     <nav className="flex items-center justify-center gap-3 pb-2 pt-10" aria-label="페이지">
