@@ -1,7 +1,7 @@
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect, useState, type SubmitEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { searchMovies } from "../../api/movies/search-movies";
+import { movieQueries } from "../../api/movies/movie-queries";
 import {
   SearchIcon,
   CloseIcon,
@@ -27,8 +27,7 @@ export function SearchPage() {
 
   // 검색어를 key에 넣어 검색어마다 캐시를 따로 저장하고, 빈 검색어면 요청하지 않아요.
   const searchQuery = useQuery({
-    queryKey: ["movies", "search", { query: normalizedQuery }],
-    queryFn: () => searchMovies({ query: normalizedQuery }),
+    ...movieQueries.search(normalizedQuery),
     enabled: normalizedQuery.length > 0,
   });
 

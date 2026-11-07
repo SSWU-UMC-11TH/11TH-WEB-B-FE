@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Link, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { getMovieDetail } from "../../api/movies/get-movie-detail";
+import { movieQueries } from "../../api/movies/movie-queries";
 import {
   ChevronLeftIcon,
   BookmarkIcon,
@@ -28,11 +28,8 @@ export function MovieDetailPage() {
 
   // 영화 번호를 key에 넣어 영화마다 캐시를 따로 저장하고, 올바른 번호일 때만 요청해요.
   const movieDetailQuery = useQuery({
-    queryKey: ["movies", "detail", parsedMovieId],
-    queryFn: () => getMovieDetail(parsedMovieId),
+    ...movieQueries.detail(parsedMovieId),
     enabled: isValidMovieId,
-    // 전역 기본값(1분) 대신 30초가 지나면 stale로 바꿔요.
-    staleTime: 30 * 1000,
   });
 
   const isBookmarked = useBookmarkStore((state) =>

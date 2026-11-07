@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getMovies } from "../../api/movies/get-movies";
+import { movieQueries } from "../../api/movies/movie-queries";
 import { MovieGrid } from "../../components/movies/movie-grid";
 import { Pagination } from "../../components/movies/pagination";
 
@@ -11,10 +11,7 @@ export function MovieListPage() {
   const [page, setPage] = useState(1);
 
   // page를 key에 넣어 페이지마다 캐시를 따로 저장해요.
-  const moviesQuery = useQuery({
-    queryKey: ["movies", "list", { page }],
-    queryFn: () => getMovies({ page }),
-  });
+  const moviesQuery = useQuery(movieQueries.list(page));
 
   const movies = moviesQuery.data?.results ?? [];
   const totalPages = Math.min(moviesQuery.data?.total_pages ?? 0, TMDB_MAX_PAGE);
