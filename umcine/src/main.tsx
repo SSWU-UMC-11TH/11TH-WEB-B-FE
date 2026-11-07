@@ -7,8 +7,12 @@ import { routeTree } from "./routeTree.gen";
 import "./index.css";
 
 const router = createRouter({ routeTree });
+const ONE_MINUTE = 60 * 1000;
 // 캐시와 요청 설정을 관리하는 객체예요. 앱 전체에서 하나를 함께 써요.
-const queryClient = new QueryClient();
+// 받아 온 데이터를 1분 동안 최신으로 보고, 그동안은 다시 요청하지 않아요.
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { staleTime: ONE_MINUTE } },
+});
 
 declare module "@tanstack/react-router" {
   interface Register {

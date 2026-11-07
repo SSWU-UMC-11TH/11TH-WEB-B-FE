@@ -31,6 +31,8 @@ export function MovieDetailPage() {
     queryKey: ["movies", "detail", parsedMovieId],
     queryFn: () => getMovieDetail(parsedMovieId),
     enabled: isValidMovieId,
+    // 전역 기본값(1분) 대신 30초가 지나면 stale로 바꿔요.
+    staleTime: 30 * 1000,
   });
 
   const isBookmarked = useBookmarkStore((state) =>
