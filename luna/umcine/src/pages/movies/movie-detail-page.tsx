@@ -1,19 +1,26 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { Link, useParams } from '@tanstack/react-router'
-import { movies } from '../../data/movies'
-import type { Movie } from '../../types/movie'
+import { getMovieDetail, isValidMovieId } from '../../api/movies'
+import { useMovieRequest } from '../../hooks/use-movie-request'
+import MovieImage from '../../components/movies/movie-image'
+import RequestStatus from '../../components/movies/request-status'
+import { useBookmarkStore } from '../../stores/bookmark-store'
+import type { MovieDetail as Movie } from '../../api/movies/models'
 import { cn } from '../../utils/cn'
 
 interface Props {
   movie: Movie
-  onToggleBookmark?: (id: number) => void
 }
 
 export default function MovieDetailPage() {
   const { movieId } = useParams({ from: '/movies/$movieId' })
-  const movie = movies.find((movie) => movie.id === Number(movieId))
-
-  if (!movie) return <main className="mx-auto w-full max-w-[1200px] px-5 py-7">영화를 찾을 수 없어요.</main>
+  const valid = isValidMovieId(movieId)
+  const request = useCallback((signal: AbortSignal) => getMovieDetail(movieId, signal), [movieId])
+  const state = useMovieRequest(movieId, request, valid)
+  if (!valid) return <main><RequestStatus error="잘못된 영화 ID입니다. 양의 정수를 입력해 주세요." /></main>
+  if (state.status === 'error') return <main><RequestStatus error={state.error} /></main>
+  if (state.status !== 'success') return <main><RequestStatus /></main>
+  const movie = state.data
 
   return (
     <main>
@@ -24,11 +31,13 @@ export default function MovieDetailPage() {
 
 export function MovieDetailView({ movie }: Props) {
   const [rating, setRating] = useState<number>(0)
+  const isBookmarked = useBookmarkStore((state) => state.bookmarkedMovieIds.includes(movie.id))
+  const toggleBookmark = useBookmarkStore((state) => state.toggleBookmark)
 
   return (
     <section className="mx-auto w-full max-w-[1440px]">
       <div className="relative h-[360px] w-full">
-        <img src={movie.backdropPath} alt={movie.title} className="h-[360px] w-full object-cover object-center saturate-[0.95]" />
+        <MovieImage backdrop path={movie.backdrop_path} alt={movie.title} className="h-[360px] w-full object-cover object-center saturate-[0.95]" />
         <Link
           to="/"
           className="absolute top-7 left-5 rounded-none border-0 bg-transparent p-0 font-[Arial] text-[14px] font-semibold leading-[normal] text-white no-underline min-[1024px]:left-20"
@@ -38,38 +47,41 @@ export function MovieDetailView({ movie }: Props) {
         <div className="absolute bottom-7 left-5 max-w-[calc(100%-40px)] text-white min-[1024px]:left-20 min-[1024px]:max-w-[60%]">
           <h2 className="m-0 text-[28px] leading-none font-extrabold min-[640px]:text-[36px]">{movie.title}</h2>
           <div>
-            {movie.originalTitle}
+            {movie.original_title}
           </div>
 
           <div>
-            {movie.releaseDate}
+            {movie.release_date}
             {'  '}
-            {movie.genres.join(' · ')}
+            {movie.genres.map((genre) => genre.name).join(' · ')}
             {'  '}
-            {movie.runtime}
+            {movie.runtime ? `${movie.runtime}분` : '상영 시간 정보 없음'}
           </div>
         </div>
       </div>
 
       <div className="mx-auto grid max-w-[1440px] grid-cols-1 items-start gap-8 px-5 pt-5 pb-8 min-[640px]:grid-cols-[210px_minmax(0,1fr)] min-[1024px]:px-20 min-[1200px]:grid-cols-[210px_minmax(0,1fr)_320px]">
         <aside>
-          <img className="aspect-[2/3] w-[210px] max-w-full rounded-lg object-cover" src={movie.posterPath} alt={movie.title} />
+          <MovieImage className="aspect-[2/3] w-[210px] max-w-full rounded-lg object-cover" path={movie.poster_path} alt={movie.title} />
         </aside>
 
         <div className="min-w-0">
           <h2 className="mt-0 mb-[14px] text-[20px] leading-[1.4] font-bold text-[#17191e]">{movie.tagline}</h2>
           <p className="m-0 text-[14px] leading-[1.8] text-[#667085]">{movie.overview}</p>
-          <span
+          <button
+            type="button"
             className="static mt-4 inline-flex cursor-pointer items-center justify-center gap-2 rounded-[6px] border-0 bg-[#2563eb] px-4 py-[10px] font-[Arial] text-[14px] font-bold leading-[normal] text-white"
-            aria-pressed={movie.isBookmarked}
+            aria-pressed={isBookmarked}
+            aria-label={isBookmarked ? '북마크 해제' : '북마크 추가'}
+            onClick={() => toggleBookmark(movie.id)}
           >
             <img
               className="size-[18px] brightness-0 invert"
-              src={movie.isBookmarked ? '/icons/bookmark.svg' : '/icons/bookmark-outline.svg'}
+              src={isBookmarked ? '/icons/bookmark.svg' : '/icons/bookmark-outline.svg'}
               alt=""
             />
             즐겨찾기
-          </span>
+          </button>
         </div>
 
         <aside className="w-full border-t border-[#e5e7eb] pt-8 min-[640px]:col-span-2 min-[1200px]:col-span-1 min-[1200px]:w-80 min-[1200px]:border-t-0 min-[1200px]:border-l min-[1200px]:pt-0 min-[1200px]:pl-8">
