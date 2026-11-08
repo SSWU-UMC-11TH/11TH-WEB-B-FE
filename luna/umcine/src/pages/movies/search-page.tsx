@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
-import { searchMovies } from '../../api/movies'
-import { useMovieRequest } from '../../hooks/use-movie-request'
+import { movieSearchQueryOptions } from '../../api/movies/query-options'
 import MovieImage from '../../components/movies/movie-image'
 import RequestStatus from '../../components/movies/request-status'
 import { useBookmarkStore } from '../../stores/bookmark-store'
@@ -18,9 +18,8 @@ export default function SearchPage() {
   }, [query])
 
   const normalizedQuery = (query ?? '').trim()
-  const request = useCallback((signal: AbortSignal) => searchMovies(normalizedQuery, signal), [normalizedQuery])
-  const state = useMovieRequest(normalizedQuery, request, Boolean(normalizedQuery))
-  const results = state.status === 'success' ? state.data.results : []
+  const searchQuery = useQuery(movieSearchQueryOptions(normalizedQuery))
+  const results = searchQuery.data?.results ?? []
 
   function submit(event: React.FormEvent) {
     event.preventDefault()
@@ -44,11 +43,13 @@ export default function SearchPage() {
             </div>
           </form>
           <div className="mt-[14px] flex flex-wrap items-center justify-between gap-2 border-b border-[#e5e7eb] pb-[14px]" aria-live="polite">
-            {normalizedQuery ? <><strong className="text-[16px] font-bold text-[#17191e] break-words">'{query?.trim()}' 검색 결과</strong>{state.status === 'success' && <span className="text-[12px] text-[#98a2b3]">영화 {state.data.total_results}개</span>}</> : <p className="my-4">검색어를 입력해 주세요.</p>}
+            {normalizedQuery ? <><strong className="text-[16px] font-bold text-[#17191e] break-words">'{query?.trim()}' 검색 결과</strong>{searchQuery.isSuccess && <span className="text-[12px] text-[#98a2b3]">영화 {searchQuery.data.total_results}개</span>}</> : <p className="my-4">검색어를 입력해 주세요.</p>}
           </div>
         </div>
-        {state.status === 'loading' && <RequestStatus />}
-        {state.status === 'error' && <RequestStatus error={state.error} />}
+
+        {searchQuery.isLoading && <RequestStatus />}
+        {searchQuery.isError && <RequestStatus error={searchQuery.error instanceof Error ? searchQuery.error.message : '영화 검색에 실패했습니다.'} />}
+
         <div className="mt-[18px] grid grid-cols-1 items-start gap-x-10 gap-y-0 min-[901px]:grid-cols-2">
           {results.map((movie) => {
             const isBookmarked = bookmarkedMovieIds.includes(movie.id)
@@ -80,7 +81,7 @@ export default function SearchPage() {
               </div>
             )
           })}
-          {state.status === 'success' && results.length === 0 && <p className="my-4 p-10 text-center text-[#6b7280]">검색 결과가 없어요.</p>}
+          {searchQuery.isSuccess && results.length === 0 && normalizedQuery.length > 0 && <p className="my-4 p-10 text-center text-[#6b7280]">검색 결과가 없어요.</p>}
         </div>
       </section>
     </main>
