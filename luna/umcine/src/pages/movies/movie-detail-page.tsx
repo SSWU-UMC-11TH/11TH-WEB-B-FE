@@ -8,6 +8,7 @@ import RequestStatus from '../../components/movies/request-status'
 import { useBookmarkStore } from '../../stores/bookmark-store'
 import type { MovieDetail as Movie } from '../../api/movies/models'
 import { cn } from '../../utils/cn'
+import { getMovieErrorMessage } from '../../utils/movie-error-message'
 
 interface Props {
   movie: Movie
@@ -24,7 +25,7 @@ export default function MovieDetailPage() {
   }
 
   if (movieDetailQuery.isError) {
-    return <main><RequestStatus error={movieDetailQuery.error instanceof Error ? movieDetailQuery.error.message : '영화 상세 정보를 불러오지 못했습니다.'} /></main>
+    return <main><RequestStatus error={getMovieErrorMessage(movieDetailQuery.error, '영화 상세 정보를 불러오지 못했습니다.')} /></main>
   }
 
   if (movieDetailQuery.isPending) {

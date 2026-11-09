@@ -5,6 +5,7 @@ import { movieSearchQueryOptions } from '../../api/movies/query-options'
 import MovieImage from '../../components/movies/movie-image'
 import RequestStatus from '../../components/movies/request-status'
 import { useBookmarkStore } from '../../stores/bookmark-store'
+import { getMovieErrorMessage } from '../../utils/movie-error-message'
 
 export default function SearchPage() {
   const { query } = useSearch({ from: '/search' })
@@ -48,7 +49,7 @@ export default function SearchPage() {
         </div>
 
         {searchQuery.isLoading && <RequestStatus />}
-        {searchQuery.isError && <RequestStatus error={searchQuery.error instanceof Error ? searchQuery.error.message : '영화 검색에 실패했습니다.'} />}
+        {searchQuery.isError && <RequestStatus error={getMovieErrorMessage(searchQuery.error, '영화 검색에 실패했습니다.')} />}
 
         <div className="mt-[18px] grid grid-cols-1 items-start gap-x-10 gap-y-0 min-[901px]:grid-cols-2">
           {results.map((movie) => {
