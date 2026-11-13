@@ -1,0 +1,77 @@
+/* Account screens: dimensions measured from the supplied 2x desktop references. */
+.account-page { background:#f6f7f9; color:#17191e; }
+.auth-layout { min-height:calc(100vh - 90px); display:flex; align-items:center; justify-content:center; padding:48px 24px; }
+.auth-form { width:430px; max-width:100%; }
+.auth-title { margin:0 0 20px; font-size:32px; font-weight:700; letter-spacing:-.04em; }
+.account-page label { color:#17191e; font-size:14px; font-weight:700; margin-bottom:8px; }
+.account-page input { height:48px; width:100%; min-width:0; border:1px solid #e3e5e9; border-radius:8px; background:white; color:#17191e; font-size:14px; padding:0 15px; }
+.account-page input::placeholder { color:#969ead; }
+.auth-page input[type=email]#login-email,.auth-page input#login-password { padding-left:35px; }
+.auth-page form { display:flex; flex-direction:column; gap:16px; }
+.auth-page form > * { margin-block:0; }
+.auth-page form > button { height:48px; border:1px solid white; border-radius:8px; background:#265ff2; font-weight:700; font-size:14px; }
+.auth-page .auth-form > p { margin-top:20px; font-size:13px; color:#626a79; }
+.auth-page .auth-form > p a { text-decoration:none; }
+.auth-page form > div > .text-\[12px\] { margin-top:4px; font-size:11px; line-height:16px; color:#969ead; }
+.duplicate-field { position:relative; }
+.duplicate-field input { padding-right:90px; }
+.duplicate-field button { position:absolute; top:0; right:14px; height:48px; padding:0; border:0; background:transparent; color:#2563ff; font-size:12px; font-weight:700; }
+.duplicate-field button:hover,.duplicate-field button:disabled { background:transparent; }
+.password-toggle { opacity:0; }
+.password-toggle:focus-visible,.relative:hover > .password-toggle { opacity:1; }
+.profile-layout { max-width:1280px; margin:auto; padding:24px 0 0; }
+.profile-heading { display:flex; align-items:center; justify-content:space-between; padding-bottom:28px; border-bottom:1px solid #e3e5e9; }
+.profile-heading h1 { font-size:28px; color:#17191e; letter-spacing:-.04em; }
+.profile-heading > a,.profile-heading > button { height:42px; padding:0 17px; font-size:14px; border-radius:8px; background:#265ff2; }
+.profile-heading + div { padding-top:12px; }
+.profile-page:not(.profile-edit) .profile-heading + div > div:first-child { margin-bottom:28px; padding-bottom:12px; border-bottom:1px solid #e3e5e9; }
+.profile-page:not(.profile-edit) .profile-heading + div > div:first-child > p { margin-bottom:16px; }
+.profile-page:not(.profile-edit) .profile-heading + div > div:first-child > div { border:0; padding:0; gap:28px; }
+.profile-page p.font-semibold { font-size:18px; color:#17191e; }
+.profile-page .size-\[64px\],.profile-edit .size-\[100px\] { width:82px; height:82px; flex-shrink:0; background:#e3e5e9; }
+.profile-person { width:48px; height:48px; }
+.profile-page:not(.profile-edit) .grid.items-center { max-width:760px; grid-template-columns:1fr 1fr; gap:6px 32px; font-size:14px; }
+.profile-page:not(.profile-edit) .grid.items-center > span:nth-child(1) { grid-area:1/1; }
+.profile-page:not(.profile-edit) .grid.items-center > span:nth-child(3) { grid-area:1/2; }
+.profile-page:not(.profile-edit) .grid.items-center > span:nth-child(odd) { font-size:11px; color:#969ead; }
+.profile-page:not(.profile-edit) .grid.items-center > span:nth-child(even) { color:#17191e; }
+.favorite-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:18px; }
+.favorite-grid img { width:100%; height:274px; object-fit:cover; border-radius:10px; }
+.favorite-grid h3 { font-size:14px; font-weight:700; margin-top:8px; }
+.favorite-grid p { margin-top:4px; color:#969ead; font-size:12px; }
+.favorites-pagination { margin-top:36px; display:flex; justify-content:center; gap:14px; align-items:center; }
+.favorites-pagination button { width:36px; height:36px; border-radius:8px; }
+.favorites-pagination button[aria-current] { background:#17191e; color:white; font-weight:700; }
+.favorites-pagination img { width:20px; height:20px; }
+.favorites-pagination button:disabled { opacity:.18; }
+.profile-edit .profile-layout { min-height:calc(100vh - 90px); display:flex; flex-direction:column; padding-bottom:28px; }
+.profile-edit .profile-heading { border:0; padding-bottom:0; }
+.profile-edit .profile-heading + div { padding-top:12px; }
+.profile-edit .profile-heading + div > p { margin-bottom:36px; font-size:14px; color:#626a79; }
+.profile-edit form > div { display:grid; grid-template-columns:1fr 1fr; gap:0; }
+.profile-edit form > div > div:first-child { max-width:none; padding-top:20px; }
+.profile-edit form > div > div:last-child { max-width:none; }
+.profile-edit form > div > div:last-child > div + div { margin-top:18px; }
+.profile-edit .profile-image-label { margin-top:4px; font-size:14px; font-weight:700; }
+.profile-image-help { margin-top:4px; font-size:11px; color:#969ead; }
+.profile-edit .relative > button { width:24px; height:24px; bottom:0; background:#f6f7f9; border:0; box-shadow:none; }
+.profile-edit .relative > button svg { display:none; }
+.profile-edit .relative > button::after { content:''; width:24px; height:24px; background:url('/icons/edit.svg') center/contain no-repeat; }
+.profile-edit .profile-layout > div:last-child { margin-top:auto; border:1px solid #f1251b; border-radius:10px; background:#f6e4e4; padding:20px; color:#f1251b; }
+.profile-edit .profile-layout > div:last-child p { color:#f1251b; font-size:11px; }
+.profile-edit .profile-layout > div:last-child p:first-child { font-size:14px; }
+.profile-edit .profile-layout > div:last-child button { height:42px; border-color:#f1251b; color:#f1251b; font-size:14px; border-radius:8px; }
+/* Keep shared movie-page layout untouched. */
+body:has(.account-page) header > div { max-width:1280px; padding:24px 0; min-height:90px; }
+body:has(.account-page) header nav { gap:30px; }
+body:has(.account-page) header > div > div:first-child { gap:44px; }
+body:has(.account-page) header a[aria-label*="UMCine"] { gap:10px; }
+body:has(.account-page) header a[aria-label*="UMCine"] img:first-child { width:32px; height:32px; }
+body:has(.account-page) header a[aria-label*="UMCine"] img:last-child { height:24px; }
+body:has(.account-page) header a[href="/signup"] { display:none; }
+body:has(.account-page) header a[href="/login"] { height:40px; display:flex; align-items:center; padding:0 17px; font-family:inherit; font-size:14px; }
+body:has(.auth-page) footer,body:has(.profile-edit) footer { display:none; }
+body:has(.profile-page:not(.profile-edit)) footer { margin-top:180px; }
+body:has(.profile-page:not(.profile-edit)) footer > div { max-width:1280px; padding:18px 0; }
+@media(max-width:1350px) { .profile-layout { margin-inline:32px; } body:has(.account-page) header > div { margin-inline:32px; } }
+@media(max-width:700px) { .profile-layout { margin-inline:20px; } .auth-layout { padding:48px 20px; } .profile-heading h1 { font-size:26px; } .profile-edit form > div { grid-template-columns:1fr; gap:28px; } .profile-edit .profile-layout > div:last-child { margin-top:100px; } .favorite-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .favorite-grid img { height:auto; aspect-ratio:242/274; } .profile-page:not(.profile-edit) .grid.items-center { grid-template-columns:1fr; } .profile-page:not(.profile-edit) .grid.items-center > span:nth-child(3) { grid-area:auto; } body:has(.account-page) header > div { margin-inline:20px; } body:has(.account-page) header > div > div:first-child { gap:20px; } body:has(.account-page) header nav { gap:16px; } }
