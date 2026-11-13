@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./account.css";
 
 @theme {
   --font-umcine: Pretendard, "Pretendard Variable", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
