@@ -7,18 +7,25 @@ const activeClass = "font-bold text-[#17191e]";
 export function Header() {
   return (
     <header className="border-b border-[#e9ecef] bg-white">
-      <div className="mx-auto flex w-full max-w-[1440px] items-center gap-4 px-6 py-4 md:gap-10 md:px-20 md:py-6">
-        <Link to="/" className="flex items-center gap-2 text-lg font-bold text-[#17191e]">
+      <div className="mx-auto flex w-full max-w-[1440px] flex-wrap items-center gap-x-4 gap-y-3 px-6 py-4 md:gap-x-10 md:px-20 md:py-6">
+        <Link to="/" className="flex shrink-0 items-center gap-2 text-lg font-bold text-[#17191e]">
           <MovieIcon width={20} height={20} />
           UMCine
         </Link>
 
-        <nav className="flex items-center gap-4">
+        <nav className="order-last flex w-full items-center gap-4 sm:order-none sm:w-auto">
           <Link to="/" className={linkClass} activeProps={{ className: activeClass }}>
             영화
           </Link>
           <Link to="/search" className={linkClass} activeProps={{ className: activeClass }}>
             검색
+          </Link>
+          <Link
+            to="/mypage"
+            className={linkClass}
+            activeProps={{ className: `${activeClass} underline underline-offset-4` }}
+          >
+            내 정보
           </Link>
         </nav>
 
