@@ -1,13 +1,11 @@
-import { PersonIcon } from "../../components/icons";
+import { Link } from "@tanstack/react-router";
+import { ProfileAvatar } from "../../components/member/profile-avatar";
 import { BookmarkedMovies } from "../../components/movies/bookmarked-movies";
-
-// 회원 API 연결 전까지 디자인의 예시 정보를 사용해요.
-const profile = {
-  nickname: "gs0428",
-  email: "gwangsoo@cinemalab.kr",
-};
+import { useProfileStore } from "../../stores/profile-store";
 
 export function MyPage() {
+  const profile = useProfileStore((state) => state.profile);
+
   return (
     <>
       <main className="mx-auto w-full max-w-[1440px] flex-1 px-6 pb-12 pt-6 md:px-20">
@@ -15,13 +13,12 @@ export function MyPage() {
           <h1 className="text-[32px] font-bold leading-tight tracking-[-1.2px] text-[#17191e]">
             내 정보
           </h1>
-          <button
-            type="button"
-            disabled
-            className="h-10 shrink-0 rounded-lg bg-[#2563eb] px-4 text-sm font-bold text-white disabled:cursor-not-allowed"
+          <Link
+            to="/mypage/edit"
+            className="flex h-10 shrink-0 items-center rounded-lg bg-[#2563eb] px-4 text-sm font-bold text-white transition-colors hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb]"
           >
             정보 수정
-          </button>
+          </Link>
         </div>
 
         <section aria-labelledby="profile-title" className="border-y border-[#e3e6eb] py-3">
@@ -30,9 +27,7 @@ export function MyPage() {
           </h2>
 
           <div className="flex flex-col gap-6 pb-0 pt-4 sm:flex-row sm:items-center sm:gap-7">
-            <div className="grid h-[82px] w-[82px] shrink-0 place-items-center rounded-full bg-[#e3e6eb] text-[#17191e]">
-              <PersonIcon width={48} height={48} />
-            </div>
+            <ProfileAvatar imageDataUrl={profile.imageDataUrl} />
 
             <dl className="grid min-w-0 flex-1 gap-5 sm:grid-cols-2 sm:gap-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
               <div className="min-w-0">
