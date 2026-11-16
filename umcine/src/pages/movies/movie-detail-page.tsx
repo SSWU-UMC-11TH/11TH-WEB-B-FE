@@ -1,7 +1,7 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { Link, useParams } from "@tanstack/react-router";
-import { getMovieDetail } from "../../api/movies/get-movie-detail";
-import type { TmdbMovieDetail } from "../../api/movies/models";
+import { useQuery } from "@tanstack/react-query";
+import { movieQueries } from "../../api/movies/movie-queries";
 import {
   ChevronLeftIcon,
   BookmarkIcon,
@@ -26,9 +26,11 @@ export function MovieDetailPage() {
   const parsedMovieId = Number(movieId);
   const isValidMovieId = Number.isInteger(parsedMovieId) && parsedMovieId > 0;
 
-  const [movie, setMovie] = useState<TmdbMovieDetail | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  // 영화 번호를 key에 넣어 영화마다 캐시를 따로 저장하고, 올바른 번호일 때만 요청해요.
+  const movieDetailQuery = useQuery({
+    ...movieQueries.detail(parsedMovieId),
+    enabled: isValidMovieId,
+  });
 
   const isBookmarked = useBookmarkStore((state) =>
     state.bookmarkedMovieIds.includes(parsedMovieId),
@@ -37,53 +39,24 @@ export function MovieDetailPage() {
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
 
-  useEffect(() => {
-    let ignore = false;
-
-    async function loadMovie() {
-      setMovie(null);
-      setErrorMessage(null);
-
-      // 유효하지 않은 영화 번호라면 요청하지 않아요.
-      if (!isValidMovieId) {
-        setIsLoading(false);
-        return;
-      }
-
-      setIsLoading(true);
-
-      try {
-        const response = await getMovieDetail(parsedMovieId);
-        if (!ignore) setMovie(response);
-      } catch (error) {
-        if (!ignore) setErrorMessage(getMovieDetailErrorMessage(error));
-      } finally {
-        if (!ignore) setIsLoading(false);
-      }
-    }
-
-    loadMovie();
-
-    return () => {
-      ignore = true;
-    };
-  }, [parsedMovieId, isValidMovieId]);
-
+  // 잘못된 번호면 요청하지 않아도 isPending이 참이라, 로딩보다 먼저 확인해요.
   if (!isValidMovieId) {
     return <DetailMessage>올바르지 않은 영화 번호예요.</DetailMessage>;
   }
 
-  if (isLoading) {
+  if (movieDetailQuery.isPending) {
     return <DetailMessage>영화 정보를 불러오는 중이에요.</DetailMessage>;
   }
 
-  if (errorMessage || !movie) {
+  if (movieDetailQuery.isError) {
     return (
       <DetailMessage>
-        {errorMessage ?? "영화 정보를 불러오지 못했어요."}
+        {getMovieDetailErrorMessage(movieDetailQuery.error)}
       </DetailMessage>
     );
   }
+
+  const movie = movieDetailQuery.data;
 
   const backdropUrl = getTmdbBackdropUrl(movie.backdrop_path);
   const posterUrl = getTmdbPosterUrl(movie.poster_path);
