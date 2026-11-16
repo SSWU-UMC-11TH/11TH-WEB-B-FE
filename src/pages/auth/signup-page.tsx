@@ -1,7 +1,14 @@
 import { useState } from "react";
+import { checkEmail } from "../../api/members/check-email";
+import { checkNickname } from "../../api/members/check-nickname";
 
 export function SignupPage() {
     const [form, setForm] = useState(DEFAULT_FORM);
+
+    const [duplicateCheck, setDuplicateCheck] = useState({
+        email: DEFAULT_DUPLICATE_CHECK,
+        nickname: DEFAULT_DUPLICATE_CHECK,
+    });
 
     const isEmailValid = EMAIL_REGEX.test(form.email.trim());
 
@@ -35,14 +42,89 @@ export function SignupPage() {
         isPasswordValid &&
         isPasswordConfirmValid;
 
+    const canSubmit =
+        isFormValid &&
+        duplicateCheck.email.isAvailable &&
+        duplicateCheck.nickname.isAvailable;
+
+
+
     const handleChangeField = (
         key: DefaultFormKey,
         value: DefaultFormValue,
     ) => {
+        if (key === "email" || key === "nickname") {
+            if (duplicateCheck[key].isChecking) return;
+
+            setDuplicateCheck((prev) => ({
+                ...prev,
+                [key]: DEFAULT_DUPLICATE_CHECK,
+            }));
+        }
+
         setForm((prev) => ({
             ...prev,
             [key]: value,
         }));
+    };
+
+
+    const handleCheckDuplicate = async (key: DuplicateCheckKey) => {
+        const isValid =
+            key === "email" ? isEmailValid : isNicknameValid;
+
+        if (!isValid || duplicateCheck[key].isChecking) return;
+
+        const label = key === "email" ? "이메일" : "닉네임";
+
+        setDuplicateCheck((prev) => ({
+            ...prev,
+            [key]: {
+                isChecking: true,
+                isAvailable: false,
+            },
+        }));
+
+        try {
+            const response =
+                key === "email"
+                    ? await checkEmail(form.email.trim())
+                    : await checkNickname(form.nickname.trim());
+
+            const isAvailable = response.available;
+
+            setDuplicateCheck((prev) => ({
+                ...prev,
+                [key]: {
+                    ...prev[key],
+                    isAvailable,
+                },
+            }));
+
+            alert(
+                isAvailable
+                    ? `사용할 수 있는 ${label}이에요.`
+                    : `이미 사용 중인 ${label}이에요.`,
+            );
+        } catch {
+            setDuplicateCheck((prev) => ({
+                ...prev,
+                [key]: {
+                    ...prev[key],
+                    isAvailable: false,
+                },
+            }));
+
+            alert("중복 확인에 실패했어요. 다시 시도해 주세요.");
+        } finally {
+            setDuplicateCheck((prev) => ({
+                ...prev,
+                [key]: {
+                    ...prev[key],
+                    isChecking: false,
+                },
+            }));
+        }
     };
 
     const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -61,11 +143,21 @@ export function SignupPage() {
                         value={form.email}
                         onChange={(e) => handleChangeField("email", e.target.value)}
                         placeholder="이메일을 입력해 주세요."
+                        disabled={duplicateCheck.email.isChecking}
                     />
+
+                    <button
+                        type="button"
+                        disabled={!isEmailValid || duplicateCheck.email.isChecking}
+                        onClick={() => handleCheckDuplicate("email")}
+                    >
+                        {duplicateCheck.email.isChecking ? "확인 중" : "중복 확인"}
+                    </button>
 
                     {showEmailError && (
                         <p>올바른 이메일 형식을 입력해 주세요.</p>
                     )}
+
                 </div>
 
                 <div>
@@ -76,7 +168,16 @@ export function SignupPage() {
                         value={form.nickname}
                         onChange={(e) => handleChangeField("nickname", e.target.value)}
                         placeholder="닉네임을 입력해 주세요."
+                        disabled={duplicateCheck.nickname.isChecking}
                     />
+
+                    <button
+                        type="button"
+                        disabled={!isNicknameValid || duplicateCheck.nickname.isChecking}
+                        onClick={() => handleCheckDuplicate("nickname")}
+                    >
+                        {duplicateCheck.nickname.isChecking ? "확인 중" : "중복 확인"}
+                    </button>
 
                     {showNicknameError && (
                         <p>닉네임은 2자 이상 12자 이하로 입력해 주세요.</p>
@@ -118,7 +219,7 @@ export function SignupPage() {
                     )}
                 </div>
 
-                <button type="submit" disabled={!isFormValid}>
+                <button type="submit" disabled={!canSubmit}>
                     가입하기
                 </button>
             </form>
@@ -137,6 +238,13 @@ const DEFAULT_FORM = {
     password: "",
     passwordConfirm: "",
 };
+
+const DEFAULT_DUPLICATE_CHECK = {
+    isChecking: false,
+    isAvailable: false,
+};
+
+type DuplicateCheckKey = "email" | "nickname";
 
 type DefaultFormKey = keyof typeof DEFAULT_FORM;
 type DefaultFormValue = (typeof DEFAULT_FORM)[DefaultFormKey];
