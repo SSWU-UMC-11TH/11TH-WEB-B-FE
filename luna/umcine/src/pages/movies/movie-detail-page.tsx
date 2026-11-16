@@ -1,30 +1,40 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from '@tanstack/react-router'
-import { getMovieDetail, isValidMovieId } from '../../api/movies'
-import { useMovieRequest } from '../../hooks/use-movie-request'
+import { isValidMovieId } from '../../api/movies'
+import { movieDetailQueryOptions } from '../../api/movies/query-options'
 import MovieImage from '../../components/movies/movie-image'
 import RequestStatus from '../../components/movies/request-status'
 import { useBookmarkStore } from '../../stores/bookmark-store'
 import type { MovieDetail as Movie } from '../../api/movies/models'
 import { cn } from '../../utils/cn'
+import { getMovieErrorMessage } from '../../utils/movie-error-message'
 
 interface Props {
   movie: Movie
 }
 
 export default function MovieDetailPage() {
-  const { movieId } = useParams({ from: '/movies/$movieId' })
-  const valid = isValidMovieId(movieId)
-  const request = useCallback((signal: AbortSignal) => getMovieDetail(movieId, signal), [movieId])
-  const state = useMovieRequest(movieId, request, valid)
-  if (!valid) return <main><RequestStatus error="잘못된 영화 ID입니다. 양의 정수를 입력해 주세요." /></main>
-  if (state.status === 'error') return <main><RequestStatus error={state.error} /></main>
-  if (state.status !== 'success') return <main><RequestStatus /></main>
-  const movie = state.data
+  const { movieId: movieIdParam } = useParams({ from: '/movies/$movieId' })
+  const movieId = Number(movieIdParam)
+  const isValid = Number.isInteger(movieId) && movieId > 0
+  const movieDetailQuery = useQuery(movieDetailQueryOptions(movieId))
+
+  if (!isValid) {
+    return <main><RequestStatus error="잘못된 영화 ID입니다. 양의 정수를 입력해 주세요." /></main>
+  }
+
+  if (movieDetailQuery.isError) {
+    return <main><RequestStatus error={getMovieErrorMessage(movieDetailQuery.error, '영화 상세 정보를 불러오지 못했습니다.')} /></main>
+  }
+
+  if (movieDetailQuery.isPending) {
+    return <main><RequestStatus /></main>
+  }
 
   return (
     <main>
-      <MovieDetailView key={movie.id} movie={movie} />
+      <MovieDetailView key={movieDetailQuery.data.id} movie={movieDetailQuery.data} />
     </main>
   )
 }
