@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { checkEmail } from "../../api/members/check-email";
 import { checkNickname } from "../../api/members/check-nickname";
+import { signup } from "../../api/members/signup";
 
 export function SignupPage() {
     const [form, setForm] = useState(DEFAULT_FORM);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [duplicateCheck, setDuplicateCheck] = useState({
         email: DEFAULT_DUPLICATE_CHECK,
@@ -127,9 +129,30 @@ export function SignupPage() {
         }
     };
 
-    const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+    const handleSubmit = async (
+        e: React.SubmitEvent<HTMLFormElement>,
+    ) => {
         e.preventDefault();
+
+        if (!canSubmit || isSubmitting) return;
+
+        setIsSubmitting(true);
+
+        try {
+            const response = await signup({
+                email: form.email.trim(),
+                nickname: form.nickname.trim(),
+                password: form.password,
+            });
+
+            alert(response.message);
+        } catch {
+            alert("회원가입에 실패했어요. 다시 시도해 주세요.");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
+
     return (
         <main>
             <h1>회원가입</h1>
@@ -219,8 +242,11 @@ export function SignupPage() {
                     )}
                 </div>
 
-                <button type="submit" disabled={!canSubmit}>
-                    가입하기
+                <button
+                    type="submit"
+                    disabled={!canSubmit || isSubmitting}
+                >
+                    {isSubmitting ? "가입 중" : "가입하기"}
                 </button>
             </form>
         </main>
