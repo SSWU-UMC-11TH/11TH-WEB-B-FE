@@ -1,7 +1,11 @@
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ChangeEvent, type SubmitEvent } from "react";
+import { memberQueries } from "../../api/members/member-queries";
+import type { MemberInfo } from "../../api/members/me";
 import { EditIcon } from "../../components/icons";
 import { ProfileAvatar } from "../../components/member/profile-avatar";
+import { useUpdateMeMutation } from "../../hooks/use-update-me-mutation";
 import { useProfileStore } from "../../stores/profile-store";
 
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
@@ -10,11 +14,42 @@ const inputClass =
   "h-12 w-full rounded-lg border border-[#e3e6eb] bg-white px-4 text-sm text-[#17191e] outline-none transition-colors focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/15";
 
 export function ProfileEditPage() {
+  const meQuery = useQuery(memberQueries.me());
+
+  if (meQuery.isPending) {
+    return (
+      <main className="mx-auto w-full max-w-[1440px] flex-1 px-6 py-20 text-center text-sm text-[#606774] md:px-20">
+        <p role="status">내 정보를 불러오는 중이에요.</p>
+      </main>
+    );
+  }
+
+  if (meQuery.isError) {
+    return (
+      <main className="mx-auto flex w-full max-w-[1440px] flex-1 flex-wrap items-start justify-center gap-3 px-6 py-20 text-sm text-[#606774] md:px-20">
+        <p role="alert">내 정보를 불러오지 못했어요.</p>
+        <button
+          type="button"
+          onClick={() => meQuery.refetch()}
+          className="font-bold text-[#2563eb] hover:underline"
+        >
+          다시 시도
+        </button>
+      </main>
+    );
+  }
+
+  // 불러온 내 정보를 폼의 초기값으로 쓰기 위해 데이터가 준비된 뒤에 폼을 그려요.
+  return <ProfileEditForm member={meQuery.data} />;
+}
+
+function ProfileEditForm({ member }: { member: MemberInfo }) {
   const navigate = useNavigate();
-  const profile = useProfileStore((state) => state.profile);
-  const saveProfile = useProfileStore((state) => state.saveProfile);
-  const [nickname, setNickname] = useState(profile.nickname);
-  const [imageDataUrl, setImageDataUrl] = useState(profile.imageDataUrl);
+  const savedImageDataUrl = useProfileStore((state) => state.imageDataUrl);
+  const saveImage = useProfileStore((state) => state.saveImage);
+  const updateMeMutation = useUpdateMeMutation();
+  const [nickname, setNickname] = useState(member.nickname);
+  const [imageDataUrl, setImageDataUrl] = useState(savedImageDataUrl);
   const [imageError, setImageError] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isReadingImage, setIsReadingImage] = useState(false);
@@ -75,19 +110,29 @@ export function ProfileEditPage() {
 
   function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!isNicknameValid || isReadingImage) return;
+    if (!isNicknameValid || isReadingImage || updateMeMutation.isPending) return;
     setSaveError(null);
 
     try {
-      saveProfile({ nickname, imageDataUrl });
-      navigate({ to: "/mypage" });
+      saveImage(imageDataUrl);
     } catch (error) {
       setSaveError(
         error instanceof DOMException && error.name === "QuotaExceededError"
           ? "브라우저 저장 공간이 부족해요. 더 작은 이미지를 선택해 주세요."
           : "변경사항을 저장하지 못했어요. 다시 시도해 주세요.",
       );
+      return;
     }
+
+    const trimmedNickname = nickname.trim();
+    // 닉네임이 그대로면 서버에 요청하지 않아요.
+    if (trimmedNickname === member.nickname) {
+      navigate({ to: "/mypage" });
+      return;
+    }
+
+    // 성공하면 응답으로 내 정보 캐시를 바꾸고(setQueryData) 마이페이지로 이동해요.
+    updateMeMutation.mutate({ nickname: trimmedNickname });
   }
 
   return (
@@ -104,10 +149,10 @@ export function ProfileEditPage() {
           </div>
           <button
             type="submit"
-            disabled={!isNicknameValid || isReadingImage}
+            disabled={!isNicknameValid || isReadingImage || updateMeMutation.isPending}
             className="h-10 shrink-0 rounded-lg bg-[#2563eb] px-4 text-sm font-bold text-white transition-colors hover:enabled:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb] disabled:cursor-not-allowed disabled:opacity-50"
           >
-            변경사항 저장
+            {updateMeMutation.isPending ? "저장 중" : "변경사항 저장"}
           </button>
         </div>
 
@@ -178,7 +223,7 @@ export function ProfileEditPage() {
               <label htmlFor="profile-email" className="mb-2 block text-sm font-bold text-[#17191e]">
                 이메일
               </label>
-              <input id="profile-email" name="email" type="email" value={profile.email} readOnly className={inputClass} />
+              <input id="profile-email" name="email" type="email" value={member.email} readOnly className={inputClass} />
             </div>
           </div>
         </div>

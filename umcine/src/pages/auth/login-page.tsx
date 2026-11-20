@@ -1,15 +1,22 @@
 import { useState, type SubmitEvent } from "react";
 import { LockIcon, MailIcon } from "../../components/icons";
+import { useLoginMutation } from "../../hooks/use-login-mutation";
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const inputClass =
   "h-12 w-full rounded-lg border border-[#e3e6eb] bg-white pl-9 pr-4 text-sm text-[#17191e] outline-none transition-colors placeholder:text-[#969da8] focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/15";
 
 export function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const loginMutation = useLoginMutation();
+  const canSubmit = EMAIL_REGEX.test(email.trim()) && password.length > 0;
 
   function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!canSubmit || loginMutation.isPending) return;
+
+    loginMutation.mutate({ email: email.trim(), password });
   }
 
   return (
@@ -79,9 +86,10 @@ export function LoginPage() {
 
           <button
             type="submit"
-            className="h-12 w-full rounded-lg bg-[#2563eb] text-sm font-bold text-white transition-colors hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb]"
+            disabled={!canSubmit || loginMutation.isPending}
+            className="h-12 w-full rounded-lg bg-[#2563eb] text-sm font-bold text-white transition-colors hover:enabled:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb] disabled:cursor-not-allowed disabled:opacity-50"
           >
-            로그인
+            {loginMutation.isPending ? "로그인 중" : "로그인"}
           </button>
         </form>
 

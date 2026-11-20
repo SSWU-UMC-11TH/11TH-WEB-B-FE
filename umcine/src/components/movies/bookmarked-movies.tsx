@@ -1,97 +1,50 @@
+import { useQueries, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { isHTTPError } from "ky";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { favoriteQueries } from "../../api/favorites/favorite-queries";
 import type { TmdbMovieListItem } from "../../api/movies/models";
-import { useBookmarkStore } from "../../stores/bookmark-store";
+import { movieQueries } from "../../api/movies/movie-queries";
+import { useToggleFavoriteMutation } from "../../hooks/use-toggle-favorite-mutation";
 import { MovieGrid } from "./movie-grid";
 import { Pagination } from "./pagination";
 
 const PAGE_SIZE = 10;
 
 export function BookmarkedMovies() {
-  const movieIds = useBookmarkStore((state) => state.bookmarkedMovieIds);
-  const removeBookmark = useBookmarkStore((state) => state.removeBookmark);
+  // 즐겨찾기한 영화 번호는 서버(GET /favorites)에서 가져와요.
+  const favoriteListQuery = useQuery(favoriteQueries.list());
+  const toggleFavoriteMutation = useToggleFavoriteMutation();
   const [currentPage, setCurrentPage] = useState(1);
-  const [movies, setMovies] = useState<TmdbMovieListItem[]>([]);
-  const [unavailableMovieIds, setUnavailableMovieIds] = useState<number[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
+
+  const movieIds = favoriteListQuery.data?.map((favorite) => favorite.movieId) ?? [];
   const totalPages = Math.max(1, Math.ceil(movieIds.length / PAGE_SIZE));
+  // 마지막 페이지의 영화를 모두 해제하면 앞 페이지를 보여 줘요.
+  const page = Math.min(currentPage, totalPages);
+  const start = (page - 1) * PAGE_SIZE;
+  const pageMovieIds = movieIds.slice(start, start + PAGE_SIZE);
 
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages);
-      return;
-    }
+  // 영화 정보는 TMDB 상세 query를 재사용해서, 상세 화면에서 본 영화는 캐시로 바로 보여 줘요.
+  const movieDetailQueries = useQueries({
+    queries: pageMovieIds.map((movieId) => ({
+      ...movieQueries.detail(movieId),
+      // 없는 영화(404)는 다시 요청해도 결과가 같으니 재시도하지 않아요.
+      retry: (failureCount: number, error: Error) =>
+        !(isHTTPError(error) && error.response.status === 404) && failureCount < 3,
+    })),
+  });
 
-    let ignore = false;
+  if (favoriteListQuery.isPending) {
+    return <StatusMessage>즐겨찾기 목록을 불러오는 중이에요.</StatusMessage>;
+  }
 
-    async function loadBookmarks() {
-      setMovies([]);
-      setUnavailableMovieIds([]);
-      setErrorMessage(null);
-
-      if (movieIds.length === 0) {
-        setIsLoading(false);
-        return;
-      }
-
-      setIsLoading(true);
-
-      try {
-        // 즐겨찾기가 없으면 TMDB 설정 없이도 기본 정보를 볼 수 있어요.
-        const { getMovieDetail } = await import("../../api/movies/get-movie-detail");
-        const start = (currentPage - 1) * PAGE_SIZE;
-        const pageMovieIds = movieIds.slice(start, start + PAGE_SIZE);
-        const results = await Promise.allSettled(
-          pageMovieIds.map(getMovieDetail),
-        );
-
-        if (ignore) return;
-
-        const loadedMovies: TmdbMovieListItem[] = [];
-        const unavailableIds: number[] = [];
-        let hasRetryableFailure = false;
-
-        results.forEach((result, index) => {
-          if (result.status === "fulfilled") {
-            loadedMovies.push({
-              ...result.value,
-              genre_ids: result.value.genres.map((genre) => genre.id),
-            });
-          } else if (isHTTPError(result.reason) && result.reason.response.status === 404) {
-            // 존재하지 않는 영화는 재시도 안내 대신 개별 정리를 제공해요.
-            unavailableIds.push(pageMovieIds[index]);
-          } else {
-            hasRetryableFailure = true;
-          }
-        });
-
-        setMovies(loadedMovies);
-        setUnavailableMovieIds(unavailableIds);
-        if (hasRetryableFailure) {
-          setErrorMessage(
-            loadedMovies.length > 0
-              ? "일부 즐겨찾기 영화를 불러오지 못했어요. 다시 시도해 주세요."
-              : "즐겨찾기 영화를 불러오지 못했어요. 다시 시도해 주세요.",
-          );
-        }
-      } catch {
-        if (!ignore) {
-          setErrorMessage("즐겨찾기 영화를 불러오지 못했어요. 다시 시도해 주세요.");
-        }
-      } finally {
-        if (!ignore) setIsLoading(false);
-      }
-    }
-
-    loadBookmarks();
-
-    return () => {
-      ignore = true;
-    };
-  }, [movieIds, currentPage, totalPages, retryCount]);
+  if (favoriteListQuery.isError) {
+    return (
+      <RetryMessage onRetry={() => favoriteListQuery.refetch()}>
+        즐겨찾기 목록을 불러오지 못했어요.
+      </RetryMessage>
+    );
+  }
 
   if (movieIds.length === 0) {
     return (
@@ -104,25 +57,42 @@ export function BookmarkedMovies() {
     );
   }
 
+  const isLoadingMovies = movieDetailQueries.some((query) => query.isPending);
+  const movies: TmdbMovieListItem[] = [];
+  const unavailableMovieIds: number[] = [];
+  let hasRetryableFailure = false;
+
+  movieDetailQueries.forEach((query, index) => {
+    if (query.data) {
+      movies.push({
+        ...query.data,
+        genre_ids: query.data.genres.map((genre) => genre.id),
+      });
+    } else if (isHTTPError(query.error) && query.error.response.status === 404) {
+      unavailableMovieIds.push(pageMovieIds[index]);
+    } else if (query.isError) {
+      hasRetryableFailure = true;
+    }
+  });
+
+  function retryFailedMovies() {
+    movieDetailQueries.forEach((query) => {
+      if (query.isError) query.refetch();
+    });
+  }
+
   return (
-    <div aria-busy={isLoading}>
-      {isLoading ? (
-        <p role="status" className="py-16 text-center text-sm text-[#606774]">
-          즐겨찾기 영화를 불러오는 중이에요.
-        </p>
+    <div aria-busy={isLoadingMovies}>
+      {isLoadingMovies ? (
+        <StatusMessage>즐겨찾기 영화를 불러오는 중이에요.</StatusMessage>
       ) : (
         <>
-          {errorMessage && (
-            <div className="mb-6 flex flex-wrap items-center justify-center gap-3 py-6">
-              <p role="alert" className="text-sm text-[#606774]">{errorMessage}</p>
-              <button
-                type="button"
-                onClick={() => setRetryCount((prev) => prev + 1)}
-                className="text-sm font-bold text-[#2563eb] hover:underline"
-              >
-                다시 시도
-              </button>
-            </div>
+          {hasRetryableFailure && (
+            <RetryMessage onRetry={retryFailedMovies}>
+              {movies.length > 0
+                ? "일부 즐겨찾기 영화를 불러오지 못했어요."
+                : "즐겨찾기 영화를 불러오지 못했어요."}
+            </RetryMessage>
           )}
           {unavailableMovieIds.length > 0 && (
             <ul
@@ -142,9 +112,10 @@ export function BookmarkedMovies() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => removeBookmark(movieId)}
+                    disabled={toggleFavoriteMutation.isPending}
+                    onClick={() => toggleFavoriteMutation.mutate({ movieId, isFavorite: true })}
                     aria-label={`영화 ${movieId} 즐겨찾기에서 제거`}
-                    className="rounded-md px-2 py-1 text-sm font-bold text-[#2563eb] hover:bg-blue-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb]"
+                    className="rounded-md px-2 py-1 text-sm font-bold text-[#2563eb] hover:bg-blue-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     즐겨찾기에서 제거
                   </button>
@@ -156,11 +127,32 @@ export function BookmarkedMovies() {
         </>
       )}
 
-      <Pagination
-        currentPage={Math.min(currentPage, totalPages)}
-        totalPages={totalPages}
-        onChangePage={setCurrentPage}
-      />
+      <Pagination currentPage={page} totalPages={totalPages} onChangePage={setCurrentPage} />
+    </div>
+  );
+}
+
+function StatusMessage({ children }: { children: string }) {
+  return (
+    <p role="status" className="py-16 text-center text-sm text-[#606774]">
+      {children}
+    </p>
+  );
+}
+
+function RetryMessage({ children, onRetry }: { children: string; onRetry: () => void }) {
+  return (
+    <div className="mb-6 flex flex-wrap items-center justify-center gap-3 py-6">
+      <p role="alert" className="text-sm text-[#606774]">
+        {children} 다시 시도해 주세요.
+      </p>
+      <button
+        type="button"
+        onClick={onRetry}
+        className="text-sm font-bold text-[#2563eb] hover:underline"
+      >
+        다시 시도
+      </button>
     </div>
   );
 }
