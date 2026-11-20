@@ -9,7 +9,7 @@ export function MyPage() {
   // 닉네임과 이메일은 서버 데이터라 헤더와 같은 query key로 가져와요. 헤더에서 이미 받았다면 캐시를 써요.
   const meQuery = useQuery(memberQueries.me());
   // 프로필 이미지는 서버 API가 없어서 기존처럼 브라우저에 저장한 값을 써요.
-  const imageDataUrl = useProfileStore((state) => state.profile.imageDataUrl);
+  const imageDataUrl = useProfileStore((state) => state.imageDataUrl);
 
   return (
     <>
