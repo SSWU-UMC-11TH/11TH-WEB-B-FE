@@ -12,7 +12,7 @@ import {
 import { cn } from "../../utils/cn";
 import { formatReleaseDate } from "../../utils/movies/format-release-date";
 import { getTmdbPosterUrl } from "../../utils/movies/tmdb-image";
-import { useBookmarkStore } from "../../stores/bookmark-store";
+import { useFavoriteButton } from "../../hooks/use-favorite-button";
 
 export function SearchPage() {
   const { query } = useSearch({ from: "/search" });
@@ -200,23 +200,22 @@ interface SearchBookmarkButtonProps {
 }
 
 function SearchBookmarkButton({ movieId, title }: SearchBookmarkButtonProps) {
-  const isBookmarked = useBookmarkStore((state) =>
-    state.bookmarkedMovieIds.includes(movieId),
-  );
-  const toggleBookmark = useBookmarkStore((state) => state.toggleBookmark);
+  const { isFavorite: isBookmarked, toggle, isPending } = useFavoriteButton(movieId);
 
   return (
     <button
       type="button"
       className={cn(
-        "flex h-7 items-center gap-1 rounded-md px-2.5 text-xs font-bold transition-colors",
+        "flex h-7 items-center gap-1 rounded-md px-2.5 text-xs font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-60",
         isBookmarked
           ? "bg-blue-600 text-white hover:bg-blue-700"
           : "border border-[#e3e6eb] bg-white text-[#17191e] hover:border-[#c9ced6]",
       )}
       aria-pressed={isBookmarked}
       aria-label={isBookmarked ? `${title} 북마크 해제` : `${title} 북마크 추가`}
-      onClick={() => toggleBookmark(movieId)}
+      aria-busy={isPending}
+      disabled={isPending}
+      onClick={toggle}
     >
       {isBookmarked ? (
         <BookmarkIcon width={14} height={14} />

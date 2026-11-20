@@ -4,17 +4,15 @@ import { BookmarkIcon, BookmarkOutlineIcon } from "../icons";
 import { cn } from "../../utils/cn";
 import { formatReleaseDate } from "../../utils/movies/format-release-date";
 import { getTmdbPosterUrl } from "../../utils/movies/tmdb-image";
-import { useBookmarkStore } from "../../stores/bookmark-store";
+import { useFavoriteButton } from "../../hooks/use-favorite-button";
 
 interface MovieCardProps {
   movie: TmdbMovieListItem;
 }
 
 export function MovieCard({ movie }: MovieCardProps) {
-  const isBookmarked = useBookmarkStore((state) =>
-    state.bookmarkedMovieIds.includes(movie.id),
-  );
-  const toggleBookmark = useBookmarkStore((state) => state.toggleBookmark);
+  // 북마크는 서버 즐겨찾기(GET /favorites) 기준으로 표시하고, 누르면 추가·삭제 요청을 보내요.
+  const { isFavorite: isBookmarked, toggle, isPending } = useFavoriteButton(movie.id);
   const posterUrl = getTmdbPosterUrl(movie.poster_path);
 
   return (
@@ -35,7 +33,7 @@ export function MovieCard({ movie }: MovieCardProps) {
         <button
           type="button"
           className={cn(
-            "absolute right-[11px] top-[10px] z-10 grid h-8 w-8 place-items-center rounded-lg transition-colors hover:opacity-90",
+            "absolute right-[11px] top-[10px] z-10 grid h-8 w-8 place-items-center rounded-lg transition-colors enabled:hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60",
             isBookmarked
               ? "bg-blue-600 text-white"
               : "bg-white text-[#17191e]",
@@ -46,7 +44,9 @@ export function MovieCard({ movie }: MovieCardProps) {
               ? `${movie.title} 북마크 해제`
               : `${movie.title} 북마크 추가`
           }
-          onClick={() => toggleBookmark(movie.id)}
+          aria-busy={isPending}
+          disabled={isPending}
+          onClick={toggle}
         >
           {isBookmarked ? (
             <BookmarkIcon width={16} height={16} />
