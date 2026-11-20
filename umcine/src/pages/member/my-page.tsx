@@ -1,10 +1,15 @@
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
+import { memberQueries } from "../../api/members/member-queries";
 import { ProfileAvatar } from "../../components/member/profile-avatar";
 import { BookmarkedMovies } from "../../components/movies/bookmarked-movies";
 import { useProfileStore } from "../../stores/profile-store";
 
 export function MyPage() {
-  const profile = useProfileStore((state) => state.profile);
+  // 닉네임과 이메일은 서버 데이터라 헤더와 같은 query key로 가져와요. 헤더에서 이미 받았다면 캐시를 써요.
+  const meQuery = useQuery(memberQueries.me());
+  // 프로필 이미지는 서버 API가 없어서 기존처럼 브라우저에 저장한 값을 써요.
+  const imageDataUrl = useProfileStore((state) => state.profile.imageDataUrl);
 
   return (
     <>
@@ -27,18 +32,33 @@ export function MyPage() {
           </h2>
 
           <div className="flex flex-col gap-6 pb-0 pt-4 sm:flex-row sm:items-center sm:gap-7">
-            <ProfileAvatar imageDataUrl={profile.imageDataUrl} />
+            <ProfileAvatar imageDataUrl={imageDataUrl} />
 
-            <dl className="grid min-w-0 flex-1 gap-5 sm:grid-cols-2 sm:gap-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-              <div className="min-w-0">
-                <dt className="mb-1.5 text-xs text-[#969da8]">닉네임</dt>
-                <dd className="break-words text-base font-bold text-[#17191e]">{profile.nickname}</dd>
+            {meQuery.isPending ? (
+              <p role="status" className="text-sm text-[#606774]">내 정보를 불러오는 중이에요.</p>
+            ) : meQuery.isError ? (
+              <div className="flex flex-wrap items-center gap-3">
+                <p role="alert" className="text-sm text-[#606774]">내 정보를 불러오지 못했어요.</p>
+                <button
+                  type="button"
+                  onClick={() => meQuery.refetch()}
+                  className="text-sm font-bold text-[#2563eb] hover:underline"
+                >
+                  다시 시도
+                </button>
               </div>
-              <div className="min-w-0">
-                <dt className="mb-1.5 text-xs text-[#969da8]">이메일</dt>
-                <dd className="break-all text-base font-bold text-[#17191e]">{profile.email}</dd>
-              </div>
-            </dl>
+            ) : (
+              <dl className="grid min-w-0 flex-1 gap-5 sm:grid-cols-2 sm:gap-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+                <div className="min-w-0">
+                  <dt className="mb-1.5 text-xs text-[#969da8]">닉네임</dt>
+                  <dd className="break-words text-base font-bold text-[#17191e]">{meQuery.data.nickname}</dd>
+                </div>
+                <div className="min-w-0">
+                  <dt className="mb-1.5 text-xs text-[#969da8]">이메일</dt>
+                  <dd className="break-all text-base font-bold text-[#17191e]">{meQuery.data.email}</dd>
+                </div>
+              </dl>
+            )}
           </div>
         </section>
 
