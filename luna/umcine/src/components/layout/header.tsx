@@ -40,7 +40,14 @@ export default function Header() {
               검색
             </Link>
 
-            <span className={cn(menuClass, inactiveMenuClass)}>내 정보</span>
+            <Link
+              to="/mypage"
+              activeProps={{ className: cn(menuClass, activeMenuClass) }}
+              inactiveProps={{ className: cn(menuClass, inactiveMenuClass) }}
+              activeOptions={{ includeSearch: false }}
+            >
+              내 정보
+            </Link>
           </nav>
         </div>
 
@@ -54,9 +61,20 @@ export default function Header() {
             <img className="size-[18px]" src="/icons/search.svg" alt="" />
           </Link>
 
-          <span className="rounded-[10px] border-0 bg-[#2563eb] px-[18px] py-2 font-[Arial] text-[13.3333px] font-semibold leading-[normal] text-white">
-            로그인
-          </span>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/signup"
+              className="rounded-[10px] border border-[#dfe4ea] bg-white px-[14px] py-2 font-[Arial] text-[13.3333px] font-semibold leading-[normal] text-[#1d2025] no-underline"
+            >
+              회원가입
+            </Link>
+            <Link
+              to="/login"
+              className="rounded-[10px] border-0 bg-[#2563eb] px-[18px] py-2 font-[Arial] text-[13.3333px] font-semibold leading-[normal] text-white no-underline"
+            >
+              로그인
+            </Link>
+          </div>
         </div>
       </div>
     </header>
