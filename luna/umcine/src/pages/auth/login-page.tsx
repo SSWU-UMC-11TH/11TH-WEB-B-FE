@@ -1,5 +1,7 @@
 import React from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
+import { useLoginMutation } from '../../hooks/use-login-mutation'
+import { getApiErrorMessage } from '../../utils/api-error-message'
 
 function EyeIcon() {
   return (
@@ -44,10 +46,19 @@ export default function LoginPage() {
   const [password, setPassword] = React.useState('')
   const [showPassword, setShowPassword] = React.useState(false)
   const navigate = useNavigate()
+  const login = useLoginMutation()
+  const canSubmit = !login.isPending && Boolean(email.trim() && password)
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    navigate({ to: '/mypage' })
+    if (!canSubmit) return
+
+    try {
+      await login.mutateAsync({ email, password })
+    } catch {
+      return
+    }
+    await navigate({ to: '/', replace: true })
   }
 
   return (
@@ -114,11 +125,17 @@ export default function LoginPage() {
                 </div>
               </div>
 
+              {login.isError && (
+                <p role="alert" className="rounded-[10px] bg-[#fef2f2] px-3 py-2 text-sm text-[#b91c1c]">
+                  {getApiErrorMessage(login.error)}
+                </p>
+              )}
               <button
                 type="submit"
-                className="h-12 w-full rounded-[10px] bg-[#2563eb] text-[16px] font-semibold text-white transition hover:bg-[#1d4ed8]"
+                disabled={!canSubmit}
+                className="h-12 w-full rounded-[10px] bg-[#2563eb] text-[16px] font-semibold text-white transition hover:bg-[#1d4ed8] disabled:cursor-not-allowed disabled:bg-[#93c5fd]"
               >
-                로그인
+                {login.isPending ? '로그인 중' : '로그인'}
               </button>
             </form>
 

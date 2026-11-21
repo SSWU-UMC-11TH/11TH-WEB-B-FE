@@ -1,9 +1,9 @@
 ﻿import React from 'react'
-import { Link } from '@tanstack/react-router'
-import { HTTPError } from 'ky'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { checkEmailDuplicate } from '../../api/members/check-email-duplicate'
 import { checkNicknameDuplicate } from '../../api/members/check-nickname-duplicate'
-import { signupMember } from '../../api/members/signup'
+import { useSignupMutation } from '../../hooks/use-signup-mutation'
+import { getApiErrorMessage } from '../../utils/api-error-message'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/
@@ -46,23 +46,6 @@ function EyeOffIcon() {
   )
 }
 
-async function getApiErrorMessage(error: unknown) {
-  if (error instanceof HTTPError) {
-    try {
-      const payload = (await error.response.clone().json()) as { message?: string; error?: string }
-      return payload.message || payload.error || '요청 처리 중 오류가 발생했습니다.'
-    } catch {
-      return error.message
-    }
-  }
-
-  if (error instanceof Error) {
-    return error.message
-  }
-
-  return '요청 처리 중 오류가 발생했습니다.'
-}
-
 export default function SignupPage() {
   const [form, setForm] = React.useState<SignupFormState>(initialForm)
   const [showPassword, setShowPassword] = React.useState(false)
@@ -71,8 +54,8 @@ export default function SignupPage() {
   const [isCheckingNickname, setIsCheckingNickname] = React.useState(false)
   const [emailDuplicateCheck, setEmailDuplicateCheck] = React.useState<boolean | null>(null)
   const [nicknameDuplicateCheck, setNicknameDuplicateCheck] = React.useState<boolean | null>(null)
-  const [isSubmitting, setIsSubmitting] = React.useState(false)
-  const [submitMessage, setSubmitMessage] = React.useState('')
+  const signup = useSignupMutation()
+  const navigate = useNavigate()
   const [submitError, setSubmitError] = React.useState('')
 
   const emailValidationError = React.useMemo(() => {
@@ -99,7 +82,7 @@ export default function SignupPage() {
   const isEmailAvailable = emailValidationError === '' && emailDuplicateCheck === true
   const isNicknameAvailable = nicknameValidationError === '' && nicknameDuplicateCheck === true
   const canSubmit =
-    !isSubmitting &&
+    !signup.isPending &&
     !isCheckingEmail &&
     !isCheckingNickname &&
     emailValidationError === '' &&
@@ -111,7 +94,7 @@ export default function SignupPage() {
 
   const handleFieldChange = (field: keyof SignupFormState, value: string) => {
     setForm((current) => ({ ...current, [field]: value }))
-    setSubmitMessage('')
+    if (signup.isError) signup.reset()
     setSubmitError('')
 
     if (field === 'email') {
@@ -139,7 +122,7 @@ export default function SignupPage() {
       const response = await checkEmailDuplicate(trimmedEmail)
       setEmailDuplicateCheck(response.available)
     } catch (error) {
-      const message = await getApiErrorMessage(error)
+      const message = getApiErrorMessage(error)
       setEmailDuplicateCheck(false)
       setSubmitError(message)
     } finally {
@@ -163,7 +146,7 @@ export default function SignupPage() {
       const response = await checkNicknameDuplicate(normalizedValue)
       setNicknameDuplicateCheck(response.available)
     } catch (error) {
-      const message = await getApiErrorMessage(error)
+      const message = getApiErrorMessage(error)
       setNicknameDuplicateCheck(false)
       setSubmitError(message)
     } finally {
@@ -178,28 +161,21 @@ export default function SignupPage() {
       return
     }
 
-    setIsSubmitting(true)
     setSubmitError('')
-    setSubmitMessage('')
 
     try {
-      const response = await signupMember({
-        email: form.email.trim(),
-        nickname: normalizeNickname(form.nickname),
+      await signup.mutateAsync({
+        email: form.email,
+        nickname: form.nickname,
         password: form.password,
       })
-
-      setSubmitMessage(response.message)
-      setForm(initialForm)
-      setEmailDuplicateCheck(null)
-      setNicknameDuplicateCheck(null)
-    } catch (error) {
-      const message = await getApiErrorMessage(error)
-      setSubmitError(message)
-    } finally {
-      setIsSubmitting(false)
+    } catch {
+      return
     }
+    await navigate({ to: '/login', replace: true })
   }
+
+  const errorMessage = signup.isError ? getApiErrorMessage(signup.error) : submitError
 
   return (
     <>
@@ -338,15 +314,14 @@ export default function SignupPage() {
                 {form.passwordConfirm && passwordConfirmValidationError && <p className="mt-2 text-sm text-[#ef4444]">{passwordConfirmValidationError}</p>}
               </div>
 
-              {submitError && <p className="rounded-[10px] bg-[#fef2f2] px-3 py-2 text-sm text-[#b91c1c]">{submitError}</p>}
-              {submitMessage && <p className="rounded-[10px] bg-[#ecfdf5] px-3 py-2 text-sm text-[#166534]">{submitMessage}</p>}
+              {errorMessage && <p role="alert" className="rounded-[10px] bg-[#fef2f2] px-3 py-2 text-sm text-[#b91c1c]">{errorMessage}</p>}
 
               <button
                 type="submit"
                 disabled={!canSubmit}
                 className="h-12 w-full rounded-[10px] bg-[#2563eb] text-[16px] font-semibold text-white transition hover:bg-[#1d4ed8] disabled:cursor-not-allowed disabled:bg-[#93c5fd]"
               >
-                {isSubmitting ? '가입 중' : '가입하기'}
+                {signup.isPending ? '가입 중' : '가입하기'}
               </button>
             </form>
 

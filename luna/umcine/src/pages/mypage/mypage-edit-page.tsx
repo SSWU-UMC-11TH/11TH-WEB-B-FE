@@ -1,16 +1,34 @@
 import React from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { useUserProfileStore } from '../../stores/user-profile-store'
+import type { MemberInfo } from '../../api/members/me'
+import { useMeQuery } from '../../hooks/use-me-query'
+import { useUpdateMeMutation } from '../../hooks/use-update-me-mutation'
+import { getApiErrorMessage } from '../../utils/api-error-message'
 
 export default function MyPageEditPage() {
-  const navigate = useNavigate()
-  const { nickname, email, setNickname } = useUserProfileStore()
-  const [draftNickname, setDraftNickname] = React.useState(nickname)
+  const { data: member } = useMeQuery()
+  return member ? <ProfileEditForm member={member} /> : null
+}
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+function ProfileEditForm({ member: { nickname, email } }: { member: MemberInfo }) {
+  const navigate = useNavigate()
+  const update = useUpdateMeMutation()
+  const [draftNickname, setDraftNickname] = React.useState(nickname)
+  const trimmedNickname = draftNickname.trim()
+  const nicknameLength = Array.from(trimmedNickname).length
+  const isNicknameValid = nicknameLength >= 2 && nicknameLength <= 12
+  const canSubmit = isNicknameValid && !update.isPending
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    setNickname(draftNickname.trim() || nickname)
-    navigate({ to: '/mypage' })
+    if (!canSubmit) return
+
+    try {
+      await update.mutateAsync({ nickname: trimmedNickname })
+    } catch {
+      return
+    }
+    await navigate({ to: '/mypage' })
   }
 
   return (
@@ -21,9 +39,10 @@ export default function MyPageEditPage() {
           <button
             type="submit"
             form="profile-form"
-            className="inline-flex h-11 items-center justify-center rounded-[10px] bg-[#2563eb] px-5 text-[14px] font-semibold text-white transition hover:bg-[#1d4ed8]"
+            disabled={!canSubmit}
+            className="inline-flex h-11 items-center justify-center rounded-[10px] bg-[#2563eb] px-5 text-[14px] font-semibold text-white transition hover:bg-[#1d4ed8] disabled:cursor-not-allowed disabled:bg-[#93c5fd]"
           >
-            변경사항 저장
+            {update.isPending ? '저장 중' : '변경사항 저장'}
           </button>
         </div>
 
@@ -61,6 +80,7 @@ export default function MyPageEditPage() {
                       id="edit-nickname"
                       type="text"
                       value={draftNickname}
+                      disabled={update.isPending}
                       onChange={(event) => setDraftNickname(event.target.value)}
                       className="h-12 flex-1 rounded-[10px] border border-[#dfe4ea] bg-[#f8fafc] px-3 text-[14px] text-[#111827] outline-none transition focus:border-[#2563eb] focus:bg-white"
                       placeholder="새 닉네임을 입력해주세요"
@@ -72,6 +92,12 @@ export default function MyPageEditPage() {
                       중복 확인
                     </button>
                   </div>
+                  {!isNicknameValid && (
+                    <p className="mt-2 text-sm text-[#b91c1c]">닉네임은 2자 이상 12자 이하여야 합니다.</p>
+                  )}
+                  {update.isError && (
+                    <p role="alert" className="mt-2 text-sm text-[#b91c1c]">{getApiErrorMessage(update.error)}</p>
+                  )}
                 </div>
 
                 <div>

@@ -3,12 +3,16 @@ import { Link } from '@tanstack/react-router'
 import { useQueries } from '@tanstack/react-query'
 import { movieDetailQueryOptions } from '../../api/movies/query-options'
 import MovieImage from '../../components/movies/movie-image'
-import { useBookmarkStore } from '../../stores/bookmark-store'
-import { useUserProfileStore } from '../../stores/user-profile-store'
+import { useFavoritesQuery } from '../../hooks/use-favorites'
+import { useMeQuery } from '../../hooks/use-me-query'
+import { useAuthStore } from '../../stores/auth-store'
+import { getApiErrorMessage } from '../../utils/api-error-message'
 
 export default function MyPage() {
-  const { nickname, email } = useUserProfileStore()
-  const bookmarkedMovieIds = useBookmarkStore((state) => state.bookmarkedMovieIds)
+  const hasToken = useAuthStore((state) => Boolean(state.accessToken))
+  const member = useMeQuery()
+  const favorites = useFavoritesQuery(hasToken && Boolean(member.data))
+  const bookmarkedMovieIds = favorites.data?.map(({ movieId }) => movieId) ?? []
 
   const [page, setPage] = React.useState(1)
   const totalPages = Math.max(1, Math.ceil(bookmarkedMovieIds.length / 5))
@@ -40,10 +44,10 @@ export default function MyPage() {
 
               <div className="grid w-full max-w-[520px] grid-cols-[140px_1fr] items-center gap-y-4 text-[16px]">
                 <span className="text-[#6b7280]">닉네임</span>
-                <span className="font-semibold text-[#111827]">{nickname}</span>
+                <span className="font-semibold text-[#111827]">{member.data?.nickname ?? '—'}</span>
 
                 <span className="text-[#6b7280]">이메일</span>
-                <span className="font-semibold text-[#111827]">{email}</span>
+                <span className="font-semibold text-[#111827]">{member.data?.email ?? '—'}</span>
               </div>
             </div>
           </div>
@@ -51,7 +55,14 @@ export default function MyPage() {
           <div>
             <p className="mb-5 text-[16px] font-semibold text-[#111827]">내 즐겨찾기</p>
 
-            {bookmarkedMovieIds.length === 0 ? (
+            {favorites.isPending ? (
+              <p role="status">즐겨찾기를 불러오는 중이에요.</p>
+            ) : favorites.isError ? (
+              <div>
+                <p role="alert">{getApiErrorMessage(favorites.error)}</p>
+                <button type="button" className="text-[#2563eb]" onClick={() => void favorites.refetch()}>다시 불러오기</button>
+              </div>
+            ) : bookmarkedMovieIds.length === 0 ? (
               <div className="flex min-h-[220px] items-center justify-center rounded-[16px] border border-dashed border-[#dfe4ea] bg-white text-center text-[15px] text-[#6b7280]">
                 아직 즐겨찾기한 영화가 없어요.
               </div>

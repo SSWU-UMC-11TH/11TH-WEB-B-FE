@@ -1,4 +1,4 @@
-import { apiClient } from '../api-client'
+import { apiClient, unwrapResult, type ApiResponse } from '../api-client'
 
 export interface SignupPayload {
   email: string
@@ -12,19 +12,13 @@ export interface SignupResult {
   nickname: string
 }
 
-export interface SignupResponse {
-  isSuccess: boolean
-  code: string
-  message: string
-  result: SignupResult
-}
-
 export async function signupMember(payload: SignupPayload) {
-  return apiClient.post('members', {
+  const response = await apiClient.post('members', {
     json: {
       email: payload.email.trim(),
       nickname: payload.nickname.replace(/\s+/g, ''),
       password: payload.password,
     },
-  }).json<SignupResponse>()
+  }).json<ApiResponse<SignupResult>>()
+  return unwrapResult(response)
 }
