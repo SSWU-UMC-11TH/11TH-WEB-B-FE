@@ -5,6 +5,10 @@ import { createRoot } from 'react-dom/client'
 import { createRouter, RouterProvider } from '@tanstack/react-router'
 import { HTTPError, TimeoutError } from 'ky'
 import { routeTree } from './routeTree.gen'
+import { meQueryKey } from './hooks/use-me-query'
+import { favoritesQueryKey } from './hooks/use-favorites'
+import { ratingsQueryKey } from './hooks/use-member-ratings'
+import { useAuthStore } from './stores/auth-store'
 import './index.css'
 
 const ONE_MINUTE = 60 * 1000
@@ -42,6 +46,14 @@ const queryClient = new QueryClient({
 })
 
 const router = createRouter({ routeTree })
+
+useAuthStore.subscribe((state, previousState) => {
+  if (state.accessToken !== previousState.accessToken) {
+    queryClient.removeQueries({ queryKey: meQueryKey, exact: true })
+    queryClient.removeQueries({ queryKey: favoritesQueryKey })
+    queryClient.removeQueries({ queryKey: ratingsQueryKey })
+  }
+})
 
 declare module '@tanstack/react-router' {
   interface Register {

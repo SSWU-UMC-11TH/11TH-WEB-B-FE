@@ -1,5 +1,7 @@
 import React from 'react'
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
+import { useMeQuery } from '../../hooks/use-me-query'
+import { useAuthStore } from '../../stores/auth-store'
 import { cn } from '../../utils/cn'
 
 const menuClass = 'cursor-pointer border-0 bg-transparent p-0 font-umcine text-[14px] leading-none no-underline'
@@ -7,6 +9,15 @@ const activeMenuClass = 'font-bold text-[#1d2025] underline decoration-[#1d2025]
 const inactiveMenuClass = 'font-semibold text-[#667085]'
 
 export default function Header() {
+  const navigate = useNavigate()
+  const accessToken = useAuthStore((state) => state.accessToken)
+  const { data: member } = useMeQuery()
+
+  function logout() {
+    useAuthStore.getState().setAccessToken(null)
+    void navigate({ to: '/login', replace: true })
+  }
+
   return (
     <header className="border-b border-[#e6e9ee] bg-white">
       <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-4 p-4 min-[641px]:px-6 min-[641px]:py-5">
@@ -62,18 +73,38 @@ export default function Header() {
           </Link>
 
           <div className="flex items-center gap-3">
-            <Link
-              to="/signup"
-              className="rounded-[10px] border border-[#dfe4ea] bg-white px-[14px] py-2 font-[Arial] text-[13.3333px] font-semibold leading-[normal] text-[#1d2025] no-underline"
-            >
-              회원가입
-            </Link>
-            <Link
-              to="/login"
-              className="rounded-[10px] border-0 bg-[#2563eb] px-[18px] py-2 font-[Arial] text-[13.3333px] font-semibold leading-[normal] text-white no-underline"
-            >
-              로그인
-            </Link>
+            {accessToken ? (
+              <>
+                <Link
+                  to="/mypage"
+                  className="rounded-[10px] border border-[#dfe4ea] bg-white px-[14px] py-2 font-[Arial] text-[13.3333px] font-semibold leading-[normal] text-[#1d2025] no-underline"
+                >
+                  {member?.nickname ?? '내 정보'}
+                </Link>
+                <button
+                  type="button"
+                  className="cursor-pointer rounded-[10px] border border-[#dfe4ea] bg-white px-[14px] py-2 font-[Arial] text-[13.3333px] font-semibold leading-[normal] text-[#1d2025]"
+                  onClick={logout}
+                >
+                  로그아웃
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/signup"
+                  className="rounded-[10px] border border-[#dfe4ea] bg-white px-[14px] py-2 font-[Arial] text-[13.3333px] font-semibold leading-[normal] text-[#1d2025] no-underline"
+                >
+                  회원가입
+                </Link>
+                <Link
+                  to="/login"
+                  className="rounded-[10px] border-0 bg-[#2563eb] px-[18px] py-2 font-[Arial] text-[13.3333px] font-semibold leading-[normal] text-white no-underline"
+                >
+                  로그인
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

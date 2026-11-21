@@ -1,13 +1,12 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from '@tanstack/react-router'
-import { isValidMovieId } from '../../api/movies'
 import { movieDetailQueryOptions } from '../../api/movies/query-options'
+import FavoriteButton from '../../components/movies/favorite-button'
 import MovieImage from '../../components/movies/movie-image'
+import MovieRating from '../../components/movies/movie-rating'
 import RequestStatus from '../../components/movies/request-status'
-import { useBookmarkStore } from '../../stores/bookmark-store'
 import type { MovieDetail as Movie } from '../../api/movies/models'
-import { cn } from '../../utils/cn'
 import { getMovieErrorMessage } from '../../utils/movie-error-message'
 
 interface Props {
@@ -40,10 +39,6 @@ export default function MovieDetailPage() {
 }
 
 export function MovieDetailView({ movie }: Props) {
-  const [rating, setRating] = useState<number>(0)
-  const isBookmarked = useBookmarkStore((state) => state.bookmarkedMovieIds.includes(movie.id))
-  const toggleBookmark = useBookmarkStore((state) => state.toggleBookmark)
-
   return (
     <section className="mx-auto w-full max-w-[1440px]">
       <div className="relative h-[360px] w-full">
@@ -78,36 +73,11 @@ export function MovieDetailView({ movie }: Props) {
         <div className="min-w-0">
           <h2 className="mt-0 mb-[14px] text-[20px] leading-[1.4] font-bold text-[#17191e]">{movie.tagline}</h2>
           <p className="m-0 text-[14px] leading-[1.8] text-[#667085]">{movie.overview}</p>
-          <button
-            type="button"
-            className="static mt-4 inline-flex cursor-pointer items-center justify-center gap-2 rounded-[6px] border-0 bg-[#2563eb] px-4 py-[10px] font-[Arial] text-[14px] font-bold leading-[normal] text-white"
-            aria-pressed={isBookmarked}
-            aria-label={isBookmarked ? '북마크 해제' : '북마크 추가'}
-            onClick={() => toggleBookmark(movie.id)}
-          >
-            <img
-              className="size-[18px] brightness-0 invert"
-              src={isBookmarked ? '/icons/bookmark.svg' : '/icons/bookmark-outline.svg'}
-              alt=""
-            />
-            즐겨찾기
-          </button>
+          <FavoriteButton movieId={movie.id} />
         </div>
 
         <aside className="w-full border-t border-[#e5e7eb] pt-8 min-[640px]:col-span-2 min-[1200px]:col-span-1 min-[1200px]:w-80 min-[1200px]:border-t-0 min-[1200px]:border-l min-[1200px]:pt-0 min-[1200px]:pl-8">
-          <div>
-            <div>내 평점</div>
-            <div className="mt-2 mb-[10px] text-[12px] text-[#98a2b3]">별점은 필수, 후기는 선택이에요.</div>
-            <div className="mb-[10px] flex gap-[6px]">
-              {[1, 2, 3, 4, 5].map((n) => (
-                <button key={n} className="flex size-[34px] items-center justify-center rounded-[7px] border border-[#e5e7eb] bg-white p-0" aria-pressed={rating >= n} onClick={() => setRating(n)}>
-                  <img className={cn('size-5', rating >= n && 'filter-none')} src={rating >= n ? '/icons/star.svg' : '/icons/star-outline.svg'} alt={`star-${n}`} />
-                </button>
-              ))}
-            </div>
-            <textarea className="mt-[10px] inline-block h-[88px] w-full resize-none rounded-lg border border-[#e5e7eb] bg-white p-3 align-baseline text-[13.3333px] text-black [font-family:inherit] placeholder:text-[#757575]" placeholder="영화를 보고 느낀 점을 남겨보세요." />
-            <button className="mt-[10px] w-full rounded-[7px] border-0 bg-[#17191e] p-[11px] font-[Arial] text-[13.3333px] font-bold leading-[normal] text-white">평점 저장</button>
-          </div>
+          <MovieRating movieId={movie.id} />
         </aside>
       </div>
     </section>
